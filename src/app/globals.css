@@ -35,10 +35,10 @@
     /* Sidebar colors */
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 0 0% 98%;
-    --sidebar-primary-foreground: 240 5.9% 10%;
-    --sidebar-accent: 0 0% 90%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-primary: 0 0% 98%; /* Text color for primary items in sidebar */
+    --sidebar-primary-foreground: 240 5.9% 10%; /* Background for primary items */
+    --sidebar-accent: 0 0% 90%; /* Accent color, e.g. hover */
+    --sidebar-accent-foreground: 240 5.9% 10%; /* Text on accent */
     --sidebar-border: 240 5.9% 15%;
     --sidebar-ring: 0 0% 98%;
   }
@@ -47,54 +47,54 @@
     --background: 0 0% 0%; /* Black background for the entire page */
     --foreground: 0 0% 85%; /* Light gray for general text */
 
-    --card: 0 0% 3%; 
+    --card: 0 0% 3%;
     --card-foreground: 0 0% 90%;
     --popover: 0 0% 3%;
     --popover-foreground: 0 0% 90%;
 
     --primary: 120 70% 50%; /* CRT-like green */
-    --primary-foreground: 0 0% 95%; 
+    --primary-foreground: 0 0% 95%;
 
-    --secondary: 0 0% 10%; 
+    --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 85%;
 
-    --muted: 0 0% 8%; 
-    --muted-foreground: 0 0% 55%; 
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 55%;
 
-    --accent: 0 0% 15%; 
+    --accent: 0 0% 15%;
     --accent-foreground: 0 0% 90%;
 
-    --destructive: 0 70% 55%; 
+    --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 95%;
 
-    --border: 0 0% 12%; 
-    --input: 0 0% 8%;   
-    --ring: 120 70% 60%; 
+    --border: 0 0% 12%;
+    --input: 0 0% 8%;
+    --ring: 120 70% 60%;
 
     /* CmdWeb specific colors */
-    --cmd-prompt-color: 0 0% 85%; 
-    --cmd-input-color: 0 0% 95%;   
-    --cmd-output-color: 0 0% 85%; 
-    --cmd-error-color: 0 80% 70%;    
-    --cmd-info-color: 0 0% 70%;     
+    --cmd-prompt-color: 0 0% 85%;
+    --cmd-input-color: 0 0% 95%;
+    --cmd-output-color: 0 0% 85%;
+    --cmd-error-color: 0 80% 70%;
+    --cmd-info-color: 0 0% 70%;
 
     /* Suggestions box styling */
-    --cmd-suggestion-bg: 0 0% 5%;        
-    --cmd-suggestion-text: 0 0% 75%;       
-    --cmd-suggestion-hover-bg: 0 0% 12%;     
-    --cmd-suggestion-hover-text: 0 0% 90%;   
-    --cmd-suggestion-active-bg: 120 60% 35%;  
-    --cmd-suggestion-active-text: 0 0% 95%;  
+    --cmd-suggestion-bg: 0 0% 5%;
+    --cmd-suggestion-text: 0 0% 75%;
+    --cmd-suggestion-hover-bg: 0 0% 12%;
+    --cmd-suggestion-hover-text: 0 0% 90%;
+    --cmd-suggestion-active-bg: 120 60% 35%;
+    --cmd-suggestion-active-text: 0 0% 95%;
 
     /* Sidebar colors (dark theme specific) */
-    --sidebar-background: 0 0% 5%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 120 70% 50%;
-    --sidebar-primary-foreground: 0 0% 95%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 0 0% 10%;
-    --sidebar-ring: 120 70% 60%;
+    --sidebar-background: 0 0% 4%; /* Slightly darker than card for distinction */
+    --sidebar-foreground: 0 0% 85%; /* Consistent with general foreground */
+    --sidebar-primary: 120 70% 50%; /* Active item text (using primary green for now, will be overridden by gradient) */
+    --sidebar-primary-foreground: 0 0% 95%; /* Active item background (if any) */
+    --sidebar-accent: 0 0% 10%; /* Hover background */
+    --sidebar-accent-foreground: 0 0% 90%; /* Hover text */
+    --sidebar-border: 0 0% 8%; /* Border for sidebar itself or separators */
+    --sidebar-ring: 120 70% 60%; /* Focus ring */
   }
 
   * {
@@ -107,7 +107,15 @@
 }
 
 @layer utilities {
-  .text-prompt-gradient {
+  .text-prompt-gradient { /* For the command prompt name e.g. CmdWeb> */
+    @apply bg-gradient-to-r from-red-500 to-blue-500;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
+
+  .text-gradient-active { /* For active tab icons and text */
     @apply bg-gradient-to-r from-red-500 to-blue-500;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;

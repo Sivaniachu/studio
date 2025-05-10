@@ -59,8 +59,21 @@ export default {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
-  			}
-  		},
+  			},
+        // Custom CMD theme colors accessible via Tailwind classes e.g. text-cmd-prompt
+        'cmd-prompt': 'hsl(var(--cmd-prompt-color))',
+        'cmd-output': 'hsl(var(--cmd-output-color))',
+        'cmd-error': 'hsl(var(--cmd-error-color))',
+        'cmd-info': 'hsl(var(--cmd-info-color))',
+        'cmd-suggestion': {
+          DEFAULT: 'hsl(var(--cmd-suggestion-bg))',
+          foreground: 'hsl(var(--cmd-suggestion-text))',
+          hover: 'hsl(var(--cmd-suggestion-hover-bg))',
+          'hover-foreground': 'hsl(var(--cmd-suggestion-hover-text))',
+          active: 'hsl(var(--cmd-suggestion-active-bg))',
+          'active-foreground': 'hsl(var(--cmd-suggestion-active-text))',
+        },
+  		}
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
@@ -82,11 +95,16 @@ export default {
   				to: {
   					height: '0'
   				}
-  			}
+  			},
+        'blink': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' },
+        },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+        'blink': 'blink 1s step-end infinite',
   		}
   	}
   },

@@ -174,28 +174,39 @@
     100% { background-position: 0% 50%; }
   }
   
-  /* Input gradient glow wrapper */
+  /* Input gradient glow wrapper styling */
   .input-gradient-glow-wrapper {
     position: relative;
-    padding: 2px; /* This creates the space for the "border". 2px matches the border width of the input inside. */
-    /* Default: ShadCN md, var(--radius) is 0.5rem. Wrapper slightly larger. */
-    border-radius: calc(var(--radius) + 2px);
-    background: transparent;
-    transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Add box-shadow to transition */
-    /* Add a transparent border to prevent shifting when the gradient appears */
-    border: 2px solid transparent;
+    display: inline-block; 
+    width: 100%;
+    /* border-radius is applied inline in input.tsx as rounded-lg */
   }
 
-  .input-gradient-glow-wrapper:focus-within {
-    background-image: linear-gradient(
-      to right, /* Changed to right to match the original gradient-border example direction */
-      hsl(var(--primary)), 
-      hsl(var(--ring)) 
-    );
-    animation: border-glow-animation 1.5s infinite alternate; /* Use a new animation name */
+  .input-gradient-glow-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: -2px; /* Expands 2px outwards from the wrapper's box on all sides */
+    border-radius: inherit; /* Inherits border-radius from .input-gradient-glow-wrapper */
+    background: linear-gradient(to right, hsl(240, 100%, 50%), hsl(0, 100%, 50%));
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none; 
+    z-index: 0; 
+  }
+  
+  .input-gradient-glow-wrapper:hover::before,
+  .input-gradient-glow-wrapper:focus-within::before {
+    opacity: 1;
   }
 
-  @keyframes border-glow-animation { /* Renamed keyframes */
+  .input-gradient-glow-wrapper input {
+      position: relative; 
+      z-index: 1; 
+      /* The input's existing border-2 border-transparent will allow the ::before gradient to show through */
+      /* Its bg-background will keep the content area opaque */
+  }
+
+  @keyframes border-glow-animation {
     from {
       box-shadow: 0 0 4px 0px hsl(var(--primary) / 0.8),
                   0 0 6px 0px hsl(var(--ring) / 0.7);

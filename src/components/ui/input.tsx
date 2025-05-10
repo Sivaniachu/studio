@@ -1,11 +1,11 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
     return (
-      <div className="relative w-full">
+      <div className="input-gradient-glow-wrapper rounded-lg">
         <input
           type={type}
           className={cn(
@@ -15,11 +15,10 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
           ref={ref}
           {...props}
         />
-        <div className="absolute inset-0 rounded-md pointer-events-none border-2 border-transparent focus-visible:border-gradient"></div>
       </div>
-    )
+    );
   }
-)
-Input.displayName = "Input"
+);
+Input.displayName = "Input";
 
-export { Input }
+export { Input };

@@ -24,7 +24,7 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
       case 'cmd':
         return <TerminalView />;
       case 'ai':
-        return <AISection />;
+        return <TerminalView />; // Changed from AISection to TerminalView
       case 'notes':
         return <NoteSection />;
       case 'settings':
@@ -49,3 +49,4 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
     </div>
   );
 }
+

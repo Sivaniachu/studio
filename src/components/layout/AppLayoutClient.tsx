@@ -11,7 +11,7 @@ import SettingsSection from '@/components/sections/SettingsSection';
 
 
 interface AppLayoutClientProps {
-  children: ReactNode; // children prop is kept for flexibility, though currently unused directly for main content switching
+  children: ReactNode; 
 }
 
 export default function AppLayoutClient({ children }: AppLayoutClientProps) {
@@ -20,11 +20,6 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
   const renderContent = () => {
     switch (activeTab) {
       case 'home':
-        // For 'home', we can render the children passed to AppLayoutClient,
-        // or a specific home component. Currently, page.tsx renders TerminalView.
-        // If 'home' icon is meant to be the CMD/Terminal, we use 'cmd'.
-        // Let's assume 'home' is different for now, or can be an alias for 'cmd'.
-        // For simplicity, let's make 'home' show the CMD view as well.
         return <TerminalView />;
       case 'cmd':
         return <TerminalView />;
@@ -45,7 +40,7 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
         <h1 className="text-lg font-semibold text-foreground">CmdWeb</h1>
       </header>
 
-      <main className="flex-1 overflow-y-auto pb-20"> {/* Added pb-20 to avoid overlap with bottom navbar */}
+      <main className="flex-1 overflow-y-auto pb-8"> {/* Adjusted pb-8, navbar now mostly hidden, 1rem visible part + 1rem gap */}
         <div className="p-2 h-full">
           {renderContent()}
         </div>
@@ -54,4 +49,3 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
     </div>
   );
 }
-

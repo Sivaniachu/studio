@@ -106,6 +106,21 @@
   }
 }
 
+.gradient-border {
+  border-image: linear-gradient(to right, red, blue) 1;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.focus-visible\:border-gradient {
+  border: 2px solid transparent;
+  background: linear-gradient(to right, red, blue);
+  background-clip: border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
 @layer utilities {
   .text-prompt-gradient { 
     @apply bg-gradient-to-r from-red-500 to-blue-500;
@@ -162,16 +177,18 @@
   /* Input gradient glow wrapper */
   .input-gradient-glow-wrapper {
     position: relative;
-    padding: 2px; /* This creates the space for the "border" */
-     /* Default: ShadCN md, var(--radius) is 0.5rem. Wrapper slightly larger. */
+    padding: 2px; /* This creates the space for the "border". 2px matches the border width of the input inside. */
+    /* Default: ShadCN md, var(--radius) is 0.5rem. Wrapper slightly larger. */
     border-radius: calc(var(--radius) + 2px);
-    background: transparent; 
-    transition: background 0.3s ease-in-out;
+    background: transparent;
+    transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Add box-shadow to transition */
+    /* Add a transparent border to prevent shifting when the gradient appears */
+    border: 2px solid transparent;
   }
 
   .input-gradient-glow-wrapper:focus-within {
     background-image: linear-gradient(
-      to right,
+      to right, /* Changed to right to match the original gradient-border example direction */
       hsl(var(--primary)), 
       hsl(var(--ring)) 
     );

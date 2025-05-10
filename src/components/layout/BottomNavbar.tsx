@@ -14,7 +14,7 @@ interface BottomNavbarProps {
 }
 
 const navItems = [
-  { id: 'home', label: 'Home', icon: Home, targetTab: 'cmd' as ActiveTab },
+  { id: 'home', label: 'Home', icon: Home, targetTab: 'home' as ActiveTab },
   { id: 'ai', label: 'AI', icon: BrainCircuit, targetTab: 'ai' as ActiveTab },
   { id: 'notes', label: 'Notes', icon: NotebookText, targetTab: 'notes' as ActiveTab },
   { id: 'settings', label: 'Settings', icon: Settings, targetTab: 'settings' as ActiveTab },
@@ -31,7 +31,7 @@ export default function BottomNavbar({ activeTab, setActiveTab }: BottomNavbarPr
         "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 flex justify-center items-center h-16 bg-background/80 backdrop-blur-md border-t border-border rounded-t-lg shadow-lg",
         "w-auto max-w-xs sm:max-w-sm md:max-w-md px-4", 
         "transition-transform duration-300 ease-in-out",
-        !isHovered ? "translate-y-[calc(100%_-_0.2rem)]" : "translate-y-0" // Adjusted: 0.2rem visible (5% of 4rem height)
+        !isHovered ? "translate-y-[calc(100%_-_0.7rem)]" : "translate-y-0" // Adjusted: 0.2rem visible (5% of 4rem height)
       )}
     >
       <div className="flex space-x-3 sm:space-x-4"> 

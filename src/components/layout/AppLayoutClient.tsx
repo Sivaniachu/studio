@@ -21,16 +21,13 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
     switch (activeTab) {
       case 'home':
         return <HomeSection />; // Render HomeSection for 'home' tab
-      case 'cmd':
-        return <TerminalView />;
       case 'ai':
         return <TerminalView />; 
       case 'notes':
         return <NoteSection />;
       case 'settings':
         return <SettingsSection />;
-      default:
-        return <HomeSection />; // Default to HomeSection
+
     }
   };
   

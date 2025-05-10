@@ -122,4 +122,15 @@
     background-clip: text;
     text-fill-color: transparent;
   }
+
+  .icon-hover-gradient { /* For icon hover effect */
+    @apply transition-all;
+  }
+  .icon-hover-gradient:hover {
+    @apply bg-gradient-to-r from-blue-500 to-red-500;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
 }

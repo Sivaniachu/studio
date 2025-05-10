@@ -72,9 +72,9 @@ export default {
           hover: 'hsl(var(--cmd-suggestion-hover-bg))',
           'hover-foreground': 'hsl(var(--cmd-suggestion-hover-text))',
           active: 'hsl(var(--cmd-suggestion-active-bg))',
-          'active-foreground': 'hsl(var(--cmd-suggestion-active-text))',
-        },
-  		}
+          'active-foreground': 'hsl(var(--cmd-suggestion-active-text))'
+        }
+  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',

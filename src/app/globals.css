@@ -191,8 +191,10 @@
 
   .text-static-gradient-sweep {
     @apply relative bg-gradient-to-r from-[hsl(0,85%,60%)] to-[hsl(220,85%,60%)] bg-clip-text text-transparent;
+    display: inline-block; /* Ensures the element wraps tightly around the text */
+    position: relative;
   }
-
+  
   .text-static-gradient-sweep::after {
     content: "";
     position: absolute;
@@ -200,18 +202,32 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(to right,
+    background: linear-gradient(
+      to right,
       transparent 0%,
-      rgba(255,255,255,0.5) 40%, /* Lighter part of sweep */
-      rgba(255,255,255,0.5) 60%, /* Lighter part of sweep */
+      rgba(255, 255, 255, 0.7) 50%, /* Sharper, brighter sweep */
       transparent 100%
     );
-    background-size: 250% 100%; /* Make gradient wider than text to animate */
+    background-size: 200% 100%; /* Wider gradient for smooth animation */
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent; 
-    text-fill-color: transparent;
-    animation: light-sweep-animation 3s linear infinite;
+    -webkit-text-fill-color: transparent; /* Only use the prefixed version */
+    animation: light-sweep-animation 1.5s linear infinite; /* Fast, snappy animation */
+  }
+  
+  /* Keyframes for the light sweep */
+  @keyframes light-sweep-animation {
+    0% {
+      background-position: 0% 50%; /* Start off-screen to the left */
+    }
+    100% {
+      background-position: 200% 50%; /* Move fully to the right */
+    }
+  }
+  
+  /* Optional: Faster sweep on hover */
+  .text-static-gradient-sweep:hover::after {
+    animation: light-sweep-animation 0.8s linear infinite; /* Speed up on hover */
   }
 
 

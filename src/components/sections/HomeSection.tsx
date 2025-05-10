@@ -4,7 +4,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { BrainCircuit } from "lucide-react"; // Changed from Search to BrainCircuit for AI context
+import { BrainCircuit } from "lucide-react"; 
 
 export default function HomeSection() {
   return (
@@ -17,17 +17,29 @@ export default function HomeSection() {
         <Button
           variant="ghost"
           size="icon"
-          className="absolute left-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-1.5 text-muted-foreground hover:text-primary z-10"
+          className={cn(
+            "group absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-1.5 z-10", // Added 'group', moved to right
+            "hover:bg-transparent", // No background change on hover for the button
+            "focus-visible:ring-0 focus-visible:ring-offset-0" // Minimal focus styling for icon button
+          )}
           aria-label="AI Search"
         >
-          <BrainCircuit size={20} />
+          <BrainCircuit
+            size={20}
+            className={cn(
+              "text-gradient-flow", // Base "glitter" (animated gradient) effect
+              // On button hover, change to a static red-blue gradient and stop animation
+              "group-hover:bg-gradient-to-r group-hover:from-blue-500 group-hover:to-red-500 group-hover:animate-none"
+            )}
+            data-ai-hint="artificial intelligence"
+          />
         </Button>
         <Input
           type="text"
           placeholder="Ask me anything..."
           className={cn(
-            "w-full pl-12 pr-4 py-3 text-base md:text-sm", // Increased pl for the icon
-            "focus:outline-none focus:ring-0"
+            "w-full pl-4 pr-12 py-3 text-base md:text-sm", // Adjusted padding: pr-12 for icon on right, pl-4 for consistency
+            "focus:outline-none focus:ring-0" // Input already has minimal focus styling
           )}
         />
       </div>

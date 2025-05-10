@@ -108,15 +108,15 @@
 
 .gradient-border {
   border-image: linear-gradient(to right, red, blue) 1;
-  border-width: 1px;
+ border-width: 1px;
   border-style: solid;
 }
 
 .focus-visible\:border-gradient {
   border: 2px solid transparent;
-  background: linear-gradient(to right, red, blue);
+  background: linear-gradient(to right, red, rgb(0, 229, 255));
   background-clip: border-box;
-  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+ -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
 }
@@ -124,7 +124,7 @@
 @layer utilities {
   .text-prompt-gradient { 
     @apply bg-gradient-to-r from-red-500 to-blue-500;
-    -webkit-background-clip: text;
+ -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-fill-color: transparent;
@@ -132,7 +132,7 @@
 
   .text-gradient-active { 
     @apply bg-gradient-to-r from-red-500 to-blue-500;
-    -webkit-background-clip: text;
+ -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-fill-color: transparent;
@@ -143,7 +143,7 @@
   }
   .icon-hover-gradient:hover {
     @apply bg-gradient-to-r from-blue-500 to-red-500;
-    -webkit-background-clip: text;
+ -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-fill-color: transparent;
@@ -153,12 +153,12 @@
   .text-gradient-flow {
     background-image: linear-gradient(
       -45deg,
-      hsl(var(--primary)),      /* Theme Primary */
-      hsl(180 70% 50%),      /* Cyan/Teal */
-      hsl(220 70% 60%),      /* Vivid Blue */
-      hsl(280 70% 60%),      /* Purple */
-      hsl(320 70% 55%),      /* Magenta/Pink */
-      hsl(var(--primary))       /* Loop back to Primary */
+      blue,
+      cyan,
+      teal,
+      purple,
+      magenta,
+      red
     );
     background-size: 400% 400%; /* Needs to be larger than 100% to allow movement */
     -webkit-background-clip: text;
@@ -187,7 +187,7 @@
     position: absolute;
     inset: -2px; /* Expands 2px outwards from the wrapper's box on all sides */
     border-radius: 50px; /* Match input's rounded-full, effectively border-radius from .input-gradient-glow-wrapper */
-    background: linear-gradient(to right, hsl(var(--primary)), hsl(0, 80%, 60%), hsl(240, 80%, 60%), hsl(var(--primary))); /* Animated gradient */
+    background: linear-gradient(to right, hsl(0, 85%, 60%), hsl(220, 85%, 60%), hsl(0, 85%, 60%)); /* Red -> Blue -> Red gradient */
     background-size: 300% 100%; /* Size for animation */
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
@@ -219,3 +219,4 @@
     }
   }
 }
+

@@ -12,7 +12,7 @@ export default function HomeSection() {
         Welcome to TermAI
       </h1>
 
-      <div className="relative w-full max-w-md mt-24 input-gradient-glow-wrapper rounded-full"> {/* Increased mt from 16 to 24 */}
+      <div className="relative w-full max-w-md mt-40 input-gradient-glow-wrapper rounded-full"> {/* Increased mt from 16 to 24 */}
         <Input
           type="text"
           placeholder="Ask me anything..."

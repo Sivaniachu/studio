@@ -12,20 +12,21 @@ export default function HomeSection() {
         Welcome to TermAI
       </h1>
 
-      <div className="relative w-full max-w-md mt-8 input-gradient-glow-wrapper">
+      <div className="relative w-full max-w-md mt-16 input-gradient-glow-wrapper rounded-full"> {/* Increased mt from 8 to 16 */}
         <Input
           type="text"
           placeholder="Ask me anything..."
           className={cn(
-            "w-full pl-4 pr-10 py-2", // Use default theme bg/text. Rounded-md is part of base Input style.
-            "focus:outline-none focus:ring-0" 
+            "w-full pl-4 pr-10 py-3 text-base md:text-sm", // Adjusted padding for better text visibility
+            "focus:outline-none focus:ring-0"
           )}
         />
         <Search
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none"
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none" // Adjusted right padding for icon
           size={20}
         />
       </div>
     </div>
   );
 }
+

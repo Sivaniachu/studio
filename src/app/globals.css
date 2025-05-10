@@ -148,31 +148,6 @@
     background-clip: text;
     text-fill-color: transparent;
   }
-
-  /* Text gradient flow effect */
-  .text-gradient-flow {
-    background-image: linear-gradient(
-      -45deg,
-      blue,
-      cyan,
-      teal,
-      purple,
-      magenta,
-      red
-    );
-    background-size: 400% 400%; /* Needs to be larger than 100% to allow movement */
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-fill-color: transparent;
-    animation: textflow-animation 10s ease infinite; /* Use a new animation name */
-  }
-
-  @keyframes textflow-animation { /* Renamed keyframes */
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
   
   /* Input gradient glow wrapper styling */
   .input-gradient-glow-wrapper {
@@ -208,6 +183,37 @@
       /* Its bg-background will keep the content area opaque */
   }
 
+  .text-static-gradient-sweep {
+    @apply relative bg-gradient-to-r from-[hsl(0,85%,60%)] to-[hsl(220,85%,60%)] bg-clip-text text-transparent;
+  }
+
+  .text-static-gradient-sweep::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to right,
+      transparent 0%,
+      rgba(255,255,255,0.5) 40%, /* Lighter part of sweep */
+      rgba(255,255,255,0.5) 60%, /* Lighter part of sweep */
+      transparent 100%
+    );
+    background-size: 250% 100%; /* Make gradient wider than text to animate */
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    text-fill-color: transparent;
+    animation: light-sweep-animation 3s linear infinite;
+  }
+
+  @keyframes light-sweep-animation {
+    0% { background-position: -125% 0; } /* Start with sweep to the left */
+    100% { background-position: 125% 0; } /* End with sweep to the right */
+  }
+
+
   @keyframes border-glow-animation { /* This is for a different box-shadow glow, not currently used by input */
     from {
       box-shadow: 0 0 4px 0px hsl(var(--primary) / 0.8),
@@ -219,4 +225,3 @@
     }
   }
 }
-

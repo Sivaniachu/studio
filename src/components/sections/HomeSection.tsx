@@ -4,12 +4,15 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Sparkles } from "lucide-react"; // Import Sparkles icon
+import Image from 'next/image';
+// import aiSearchIcon from '@/assets/image.png'; // Corrected path
+import { Sparkles } from "lucide-react";
+
 
 export default function HomeSection() {
   return (
     <div className="flex flex-col h-full items-center justify-center p-4 text-center">
-      <h1 className="text-5xl font-bold mb-4 text-gradient-flow">
+      <h1 className="text-5xl font-bold mb-4 text-static-gradient-sweep">
         Welcome to TermAI
       </h1>
 
@@ -24,9 +27,10 @@ export default function HomeSection() {
           )}
           aria-label="AI Search"
         >
+          {/* <Image src={aiSearchIcon} alt="AI Search Icon" width={20} height={20} className="group-hover:icon-hover-gradient" /> */}
           <Sparkles
             className="w-5 h-5 transition-colors group-hover:icon-hover-gradient"
-            aria-hidden="true" 
+            aria-hidden="true"
           />
         </Button>
         <Input

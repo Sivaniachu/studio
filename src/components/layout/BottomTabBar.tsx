@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Dispatch, SetStateAction } from 'react';
@@ -19,10 +20,12 @@ const tabs: { name: ActiveTab; label: string; icon: React.ElementType }[] = [
   { name: 'settings', label: 'Settings', icon: SettingsIcon },
 ];
 
-// Original bar height approx 5rem.
-// To hide icons completely and leave a smaller sliver (e.g., 0.1rem = 1.6px),
-// translate by 4.9rem. (5rem total height - 0.1rem visible part = 4.9rem translation)
-const TRANSLATE_Y_COLLAPSED = '4.9rem';
+// The interactive part of the bar (div with rounded-xl, p-2, containing h-16 buttons) 
+// has an approximate height of 5rem (0.5rem top padding + 4rem button height + 0.5rem bottom padding).
+// To leave 10% (0.5rem) visible when collapsed, we need to translate it down by 90% of its height.
+// Translate amount = 5rem (total height) - 0.5rem (visible part) = 4.5rem.
+const TRANSLATE_Y_COLLAPSED = '4.5rem';
+
 
 export default function BottomTabBar({ activeTab, onTabChange }: BottomTabBarProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -47,7 +50,6 @@ export default function BottomTabBar({ activeTab, onTabChange }: BottomTabBarPro
             className={cn(
               "flex flex-col items-center justify-center h-16 w-1/4 rounded-lg group",
               "hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-              // Removed text-muted-foreground from here, applying directly to icon/text
             )}
             onClick={() => onTabChange(tab.name)}
             aria-pressed={activeTab === tab.name}
@@ -61,10 +63,10 @@ export default function BottomTabBar({ activeTab, onTabChange }: BottomTabBarPro
               )}
             />
             <span className={cn(
-                "text-xs transition-colors font-medium", // Base font-medium
+                "text-xs transition-colors font-medium", 
                 activeTab === tab.name
-                  ? "text-gradient-active font-semibold" // Active: gradient and semibold
-                  : "text-muted-foreground group-hover:text-gradient-active" // Inactive: muted, Hover: gradient
+                  ? "text-gradient-active font-semibold" 
+                  : "text-muted-foreground group-hover:text-gradient-active" 
               )}
             >
               {tab.label}
@@ -75,3 +77,4 @@ export default function BottomTabBar({ activeTab, onTabChange }: BottomTabBarPro
     </div>
   );
 }
+

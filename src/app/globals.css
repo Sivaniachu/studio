@@ -121,6 +121,12 @@
   mask-composite: exclude;
 }
 
+/* Moved @keyframes to global scope */
+@keyframes light-sweep-animation {
+  0% { background-position: -125% 0; } /* Start with sweep to the left */
+  100% { background-position: 125% 0; } /* End with sweep to the right */
+}
+
 @layer utilities {
   .text-prompt-gradient { 
     @apply bg-gradient-to-r from-red-500 to-blue-500;
@@ -206,11 +212,6 @@
     -webkit-text-fill-color: transparent; 
     text-fill-color: transparent;
     animation: light-sweep-animation 3s linear infinite;
-  }
-
-  @keyframes light-sweep-animation {
-    0% { background-position: -125% 0; } /* Start with sweep to the left */
-    100% { background-position: 125% 0; } /* End with sweep to the right */
   }
 
 

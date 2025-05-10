@@ -29,12 +29,12 @@ export default function BottomNavbar({ activeTab, setActiveTab }: BottomNavbarPr
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
         "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 flex justify-center items-center h-16 bg-background/80 backdrop-blur-md border-t border-border rounded-t-lg shadow-lg",
-        "w-auto max-w-xs sm:max-w-sm md:max-w-md px-4", // Adjusted width and padding
+        "w-auto max-w-xs sm:max-w-sm md:max-w-md px-4", 
         "transition-transform duration-300 ease-in-out",
-        !isHovered ? "translate-y-[calc(100%_-_1rem)]" : "translate-y-0" // 1rem (16px) of navbar top visible when not hovered
+        !isHovered ? "translate-y-[calc(100%_-_0.2rem)]" : "translate-y-0" // Adjusted: 0.2rem visible (5% of 4rem height)
       )}
     >
-      <div className="flex space-x-3 sm:space-x-4"> {/* Adjusted spacing for icons */}
+      <div className="flex space-x-3 sm:space-x-4"> 
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.targetTab;
@@ -45,8 +45,8 @@ export default function BottomNavbar({ activeTab, setActiveTab }: BottomNavbarPr
               aria-label={item.label}
               className={cn(
                 "flex flex-col items-center justify-center p-2 rounded-lg transition-colors group",
-                isActive ? "" : "text-muted-foreground hover:text-foreground", // Removed hover:bg-accent/50 for active state
-                !isActive && "hover:bg-transparent" // Ensure no background on hover for non-active
+                isActive ? "" : "text-muted-foreground hover:text-foreground",
+                !isActive && "hover:bg-transparent" 
               )}
             >
               <Icon
@@ -70,3 +70,4 @@ export default function BottomNavbar({ activeTab, setActiveTab }: BottomNavbarPr
     </nav>
   );
 }
+

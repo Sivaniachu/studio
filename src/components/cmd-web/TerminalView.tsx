@@ -256,7 +256,7 @@ export default function TerminalView() {
         <div className="flex items-center">
           <span className="text-prompt-gradient">{promptName}</span>
           <span className="text-cmd-prompt">&gt;</span>
-          <span className="flex-grow min-w-0 break-all">{currentInput.replace(/ /g, '\u00A0')}</span>
+          <span className="break-all">{currentInput.replace(/ /g, '\u00A0')}</span>
           <Cursor />
         </div>
         <div ref={terminalEndRef} />
@@ -312,3 +312,4 @@ function debounce<F extends (...args: any[]) => any>(func: F, waitFor: number) {
       timeout = setTimeout(() => resolve(func(...args)), waitFor);
     });
 }
+

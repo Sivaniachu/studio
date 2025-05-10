@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Input } from "@/components/ui/input";
@@ -9,8 +10,7 @@ export default function HomeSection() {
       {/* Welcome Text - uses flex-grow to push input to bottom */}
       <div className="flex-grow flex flex-col items-center justify-center">
         <h1 className={cn(
-            "text-5xl sm:text-6xl md:text-7xl font-bold text-gradient-flow mb-8",
-            "bg-clip-text text-transparent animate-textflow"
+            "text-5xl sm:text-6xl md:text-7xl font-bold text-gradient-flow mb-8"
           )}
           data-ai-hint="welcome abstract"
           >
@@ -25,10 +25,10 @@ export default function HomeSection() {
             type="text"
             placeholder="Ask me anything ->"
             className={cn(
-              "w-full h-14 sm:h-16 text-md sm:text-lg pl-4 pr-12 py-2", // Added padding for potential icon
+              "w-full h-14 sm:h-16 text-md sm:text-lg pl-4 pr-12 py-2", 
               "bg-card text-foreground placeholder-muted-foreground",
-              "border-0 ring-0 shadow-none", // Remove default border/ring
-              "focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0" // Remove default focus visuals
+              "border-0 ring-0 shadow-none", 
+              "focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0"
             )}
           />
           {/* Optional: Add a send/submit icon inside the input area if needed */}
@@ -37,3 +37,4 @@ export default function HomeSection() {
     </div>
   );
 }
+

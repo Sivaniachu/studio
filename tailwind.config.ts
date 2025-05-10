@@ -62,6 +62,7 @@ export default {
   			},
         // Custom CMD theme colors accessible via Tailwind classes e.g. text-cmd-prompt
         'cmd-prompt': 'hsl(var(--cmd-prompt-color))',
+        'cmd-input': 'hsl(var(--cmd-input-color))', // Added for text-cmd-input
         'cmd-output': 'hsl(var(--cmd-output-color))',
         'cmd-error': 'hsl(var(--cmd-error-color))',
         'cmd-info': 'hsl(var(--cmd-info-color))',

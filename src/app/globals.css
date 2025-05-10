@@ -4,122 +4,104 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%; /* Black */
-    --foreground: 120 60% 70%; /* CMD Green */
-
-    --card: 0 0% 4%; 
-    --card-foreground: 120 60% 70%;
-
-    --popover: 0 0% 4%;
-    --popover-foreground: 120 60% 70%;
-
-    --primary: 120 60% 70%; /* CMD Green for primary text */
-    --primary-foreground: 0 0% 0%; /* Black for text on primary buttons (if any) */
-
-    --secondary: 0 0% 10%; /* Dark gray for secondary elements */
-    --secondary-foreground: 120 60% 70%;
-
-    --muted: 0 0% 10%;
-    --muted-foreground: 120 40% 50%; /* Muted green */
-
-    --accent: 210 40% 35%; /* Muted Blue */
-    --accent-foreground: 0 0% 98%; /* White for text on accent */
-
-    --destructive: 0 70% 50%; /* Red for errors */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+    --radius: 0.5rem;
 
-    --border: 0 0% 15%; /* Darker gray for borders */
-    --input: 0 0% 15%; /* For input backgrounds if using standard inputs */
-    --ring: 210 40% 50%; /* Muted blue for focus rings */
-
-    --radius: 0.1rem; /* CMD is sharp, minimal radius */
-
-    /* Specific for CMD theme */
-    --cmd-prompt-color: 120 60% 70%;
-    --cmd-output-color: 120 60% 70%;
-    --cmd-error-color: 0 70% 60%; /* Brighter Red for error text */
-    --cmd-info-color: 120 50% 80%; /* Lighter green for info text */
-    --cmd-suggestion-bg: 0 0% 8%;
-    --cmd-suggestion-text: 120 50% 60%;
-    --cmd-suggestion-hover-bg: 210 40% 35%; /* Muted Blue */
-    --cmd-suggestion-hover-text: 0 0% 98%;
-    --cmd-suggestion-active-bg: 210 50% 45%;
-    --cmd-suggestion-active-text: 0 0% 98%;
-
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 0 0% 0%;
-    --foreground: 120 60% 70%;
-    --card: 0 0% 4%;
-    --card-foreground: 120 60% 70%;
-    --popover: 0 0% 4%;
-    --popover-foreground: 120 60% 70%;
-    --primary: 120 60% 70%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 120 60% 70%;
-    --muted: 0 0% 10%;
-    --muted-foreground: 120 40% 50%;
-    --accent: 210 40% 35%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 70% 50%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 210 40% 50%;
-
-    --cmd-prompt-color: 120 60% 70%;
-    --cmd-output-color: 120 60% 70%;
-    --cmd-error-color: 0 70% 60%;
-    --cmd-info-color: 120 50% 80%;
-    --cmd-suggestion-bg: 0 0% 8%;
-    --cmd-suggestion-text: 120 50% 60%;
-    --cmd-suggestion-hover-bg: 210 40% 35%;
-    --cmd-suggestion-hover-text: 0 0% 98%;
-    --cmd-suggestion-active-bg: 210 50% 45%;
-    --cmd-suggestion-active-text: 0 0% 98%;
-    
+    /* Chart colors */
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
+    --chart-5: 320 75% 50%;
 
-@layer base {
+    /* Sidebar colors */
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 240 5.9% 10%;
+    --sidebar-accent: 0 0% 90%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 240 5.9% 15%;
+    --sidebar-ring: 0 0% 98%;
+  }
+
+  .dark {
+    --background: 0 0% 0%; /* Black background for the entire page */
+    --foreground: 0 0% 85%; /* Light gray for general text */
+
+    --card: 0 0% 3%; 
+    --card-foreground: 0 0% 90%;
+    --popover: 0 0% 3%;
+    --popover-foreground: 0 0% 90%;
+
+    --primary: 120 70% 50%; /* CRT-like green */
+    --primary-foreground: 0 0% 95%; 
+
+    --secondary: 0 0% 10%; 
+    --secondary-foreground: 0 0% 85%;
+
+    --muted: 0 0% 8%; 
+    --muted-foreground: 0 0% 55%; 
+
+    --accent: 0 0% 15%; 
+    --accent-foreground: 0 0% 90%;
+
+    --destructive: 0 70% 55%; 
+    --destructive-foreground: 0 0% 95%;
+
+    --border: 0 0% 12%; 
+    --input: 0 0% 8%;   
+    --ring: 120 70% 60%; 
+
+    /* CmdWeb specific colors */
+    --cmd-prompt-color: 0 0% 85%; 
+    --cmd-input-color: 0 0% 95%;   
+    --cmd-output-color: 0 0% 85%; 
+    --cmd-error-color: 0 80% 70%;    
+    --cmd-info-color: 0 0% 70%;     
+
+    /* Suggestions box styling */
+    --cmd-suggestion-bg: 0 0% 5%;        
+    --cmd-suggestion-text: 0 0% 75%;       
+    --cmd-suggestion-hover-bg: 0 0% 12%;     
+    --cmd-suggestion-hover-text: 0 0% 90%;   
+    --cmd-suggestion-active-bg: 120 60% 35%;  
+    --cmd-suggestion-active-text: 0 0% 95%;  
+
+    /* Sidebar colors (dark theme specific) */
+    --sidebar-background: 0 0% 5%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 120 70% 50%;
+    --sidebar-primary-foreground: 0 0% 95%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 0 0% 10%;
+    --sidebar-ring: 120 70% 60%;
+  }
+
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-geist-mono); /* Apply Geist Mono globally */
-    /* Ensure selection color matches accent */
-    ::selection {
-      background-color: hsl(var(--accent));
-      color: hsl(var(--accent-foreground));
-    }
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }

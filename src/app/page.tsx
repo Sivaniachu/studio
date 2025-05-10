@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Dispatch, SetStateAction } from 'react';
@@ -9,7 +10,7 @@ import SettingsSection from '@/components/sections/SettingsSection';
 import AppLayoutClient from '@/components/layout/AppLayoutClient';
 import { Button } from '@/components/ui/button';
 import { Home, Brain, FileText, Settings as SettingsIcon, PanelLeft, PanelRight } from 'lucide-react';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 
 export type ActiveTab = "home" | "ai" | "note" | "settings";
@@ -54,8 +55,8 @@ export default function CmdWebPage() {
           </Button>
         </SheetTrigger>
         <SheetContent side="right" className="w-[250px] sm:w-[300px] bg-sidebar text-sidebar-foreground p-4">
-          <div className="flex flex-col space-y-2">
-            <h2 className="text-lg font-semibold text-sidebar-primary mb-4">Navigation</h2>
+          <SheetTitle className="text-lg font-semibold text-sidebar-primary mb-4">Navigation</SheetTitle>
+          <div className="flex flex-col space-y-2 mt-4">
             {mainTabs.map((tab) => (
               <Button
                 key={tab.name}
@@ -64,7 +65,7 @@ export default function CmdWebPage() {
                 className={cn(
                   "w-full justify-start text-base py-3 px-4 rounded-md",
                   activeTab === tab.name
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                    ? "bg-sidebar-accent text-gradient-active" 
                     : "text-sidebar-primary hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground"
                 )}
               >
@@ -76,11 +77,9 @@ export default function CmdWebPage() {
         </SheetContent>
       </Sheet>
 
-      {/* Removed pb-24 from this div */}
       <div className="p-2 h-full">
         {renderContent()}
       </div>
     </AppLayoutClient>
   );
 }
-

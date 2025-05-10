@@ -68,7 +68,7 @@
     --destructive-foreground: 0 0% 95%;
 
     --border: 0 0% 12%;
-    --input: 0 0% 8%;
+    --input: 0 0% 8%; /* Used for default input background */
     --ring: 120 70% 60%;
 
     /* CmdWeb specific colors */
@@ -87,27 +87,27 @@
     --cmd-suggestion-active-text: 0 0% 95%;
 
     /* Sidebar colors (dark theme specific) */
-    --sidebar-background: 0 0% 4%; /* Slightly darker than card for distinction */
-    --sidebar-foreground: 0 0% 85%; /* Consistent with general foreground */
-    --sidebar-primary: 120 70% 50%; /* Active item text (using primary green for now, will be overridden by gradient) */
-    --sidebar-primary-foreground: 0 0% 95%; /* Active item background (if any) */
-    --sidebar-accent: 0 0% 10%; /* Hover background */
-    --sidebar-accent-foreground: 0 0% 90%; /* Hover text */
-    --sidebar-border: 0 0% 8%; /* Border for sidebar itself or separators */
-    --sidebar-ring: 120 70% 60%; /* Focus ring */
+    --sidebar-background: 0 0% 4%; 
+    --sidebar-foreground: 0 0% 85%; 
+    --sidebar-primary: 120 70% 50%; 
+    --sidebar-primary-foreground: 0 0% 95%;
+    --sidebar-accent: 0 0% 10%; 
+    --sidebar-accent-foreground: 0 0% 90%; 
+    --sidebar-border: 0 0% 8%;
+    --sidebar-ring: 120 70% 60%;
   }
 
   * {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-mono; /* Ensure monospace font globally */
+    @apply bg-background text-foreground font-mono; 
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer utilities {
-  .text-prompt-gradient { /* For the command prompt name e.g. CmdWeb> */
+  .text-prompt-gradient { 
     @apply bg-gradient-to-r from-red-500 to-blue-500;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -115,7 +115,7 @@
     text-fill-color: transparent;
   }
 
-  .text-gradient-active { /* For active tab icons and text */
+  .text-gradient-active { 
     @apply bg-gradient-to-r from-red-500 to-blue-500;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -123,7 +123,7 @@
     text-fill-color: transparent;
   }
 
-  .icon-hover-gradient { /* For icon hover effect */
+  .icon-hover-gradient {
     @apply transition-all;
   }
   .icon-hover-gradient:hover {
@@ -132,5 +132,60 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-fill-color: transparent;
+  }
+
+  /* Text gradient flow effect */
+  .text-gradient-flow {
+    background-image: linear-gradient(
+      -45deg,
+      hsl(var(--primary)),      /* Theme Primary */
+      hsl(180 70% 50%),      /* Cyan/Teal */
+      hsl(220 70% 60%),      /* Vivid Blue */
+      hsl(280 70% 60%),      /* Purple */
+      hsl(320 70% 55%),      /* Magenta/Pink */
+      hsl(var(--primary))       /* Loop back to Primary */
+    );
+    background-size: 400% 400%; /* Needs to be larger than 100% to allow movement */
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-fill-color: transparent;
+    animation: textflow-animation 10s ease infinite; /* Use a new animation name */
+  }
+
+  @keyframes textflow-animation { /* Renamed keyframes */
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  /* Input gradient glow wrapper */
+  .input-gradient-glow-wrapper {
+    position: relative;
+    padding: 2px; /* This creates the space for the "border" */
+     /* Default: ShadCN md, var(--radius) is 0.5rem. Wrapper slightly larger. */
+    border-radius: calc(var(--radius) + 2px);
+    background: transparent; 
+    transition: background 0.3s ease-in-out;
+  }
+
+  .input-gradient-glow-wrapper:focus-within {
+    background-image: linear-gradient(
+      to right,
+      hsl(var(--primary)), 
+      hsl(var(--ring)) 
+    );
+    animation: border-glow-animation 1.5s infinite alternate; /* Use a new animation name */
+  }
+
+  @keyframes border-glow-animation { /* Renamed keyframes */
+    from {
+      box-shadow: 0 0 4px 0px hsl(var(--primary) / 0.8),
+                  0 0 6px 0px hsl(var(--ring) / 0.7);
+    }
+    to {
+      box-shadow: 0 0 8px 2px hsl(var(--primary) / 1),
+                  0 0 12px 2px hsl(var(--ring) / 0.9);
+    }
   }
 }

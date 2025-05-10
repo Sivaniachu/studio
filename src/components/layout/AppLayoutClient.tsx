@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { ReactNode } from 'react';
@@ -8,6 +7,7 @@ import TerminalView from '@/components/cmd-web/TerminalView';
 import AISection from '@/components/sections/AISection';
 import NoteSection from '@/components/sections/NoteSection';
 import SettingsSection from '@/components/sections/SettingsSection';
+import HomeSection from '@/components/sections/HomeSection'; // Import HomeSection
 
 
 interface AppLayoutClientProps {
@@ -15,22 +15,22 @@ interface AppLayoutClientProps {
 }
 
 export default function AppLayoutClient({ children }: AppLayoutClientProps) {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('cmd');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('home'); // Default to home
 
   const renderContent = () => {
     switch (activeTab) {
       case 'home':
-        return <TerminalView />;
+        return <HomeSection />; // Render HomeSection for 'home' tab
       case 'cmd':
         return <TerminalView />;
       case 'ai':
-        return <TerminalView />; // Changed from AISection to TerminalView
+        return <TerminalView />; 
       case 'notes':
         return <NoteSection />;
       case 'settings':
         return <SettingsSection />;
       default:
-        return <TerminalView />;
+        return <HomeSection />; // Default to HomeSection
     }
   };
   
@@ -40,8 +40,9 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
         <h1 className="text-lg font-semibold text-foreground">CmdWeb</h1>
       </header>
 
-      <main className="flex-1 overflow-y-auto pb-8"> {/* Adjusted pb-8, navbar now mostly hidden, 1rem visible part + 1rem gap */}
-        <div className="p-2 h-full">
+      {/* Adjusted pb-16 to ensure content doesn't overlap with fully visible navbar */}
+      <main className="flex-1 overflow-y-auto pb-16"> 
+        <div className="p-4 md:p-6 lg:p-8 h-full"> {/* Use consistent padding */}
           {renderContent()}
         </div>
       </main>
@@ -49,4 +50,3 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
     </div>
   );
 }
-

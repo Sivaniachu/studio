@@ -62,7 +62,7 @@ export default {
   			},
         // Custom CMD theme colors accessible via Tailwind classes e.g. text-cmd-prompt
         'cmd-prompt': 'hsl(var(--cmd-prompt-color))',
-        'cmd-input': 'hsl(var(--cmd-input-color))', // Added for text-cmd-input
+        'cmd-input': 'hsl(var(--cmd-input-color))', 
         'cmd-output': 'hsl(var(--cmd-output-color))',
         'cmd-error': 'hsl(var(--cmd-error-color))',
         'cmd-info': 'hsl(var(--cmd-info-color))',
@@ -101,11 +101,26 @@ export default {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0' },
         },
+        'textflow-animation': { /* Added from globals.css for Tailwind awareness */
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        },
+        'border-glow-animation': { /* Added from globals.css for Tailwind awareness */
+          'from': {
+            boxShadow: '0 0 4px 0px hsl(var(--primary) / 0.8), 0 0 6px 0px hsl(var(--ring) / 0.7)'
+          },
+          'to': {
+            boxShadow: '0 0 8px 2px hsl(var(--primary) / 1), 0 0 12px 2px hsl(var(--ring) / 0.9)'
+          }
+        }
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
         'blink': 'blink 1s step-end infinite',
+        'textflow': 'textflow-animation 10s ease infinite', /* Added */
+        'border-glow': 'border-glow-animation 1.5s infinite alternate' /* Added */
   		}
   	}
   },

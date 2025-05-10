@@ -1,18 +1,16 @@
 
 "use client";
 
-import type { Dispatch, ReactNode, SetStateAction } from 'react';
+import type { ReactNode } from 'react';
 import React from 'react';
-import type { ActiveTab } from '@/app/page';
-// import { cn } from '@/lib/utils'; // cn might still be needed if other classes are conditional
+
+// ActiveTab and related props removed as navigation is no longer handled here.
 
 interface AppLayoutClientProps {
   children: ReactNode;
-  activeTab: ActiveTab;
-  setActiveTab: Dispatch<SetStateAction<ActiveTab>>;
 }
 
-export default function AppLayoutClient({ children, activeTab, setActiveTab }: AppLayoutClientProps) {
+export default function AppLayoutClient({ children }: AppLayoutClientProps) {
   
   return (
     <div className="flex flex-col min-h-screen w-full bg-background">
@@ -23,9 +21,6 @@ export default function AppLayoutClient({ children, activeTab, setActiveTab }: A
       <main className="flex-1 overflow-y-auto">
         {children}
       </main>
-
-      {/* BottomTabBar removed */}
     </div>
   );
 }
-

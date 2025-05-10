@@ -2,8 +2,9 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Search } from "lucide-react";
+import { BrainCircuit } from "lucide-react"; // Changed from Search to BrainCircuit for AI context
 
 export default function HomeSection() {
   return (
@@ -12,18 +13,22 @@ export default function HomeSection() {
         Welcome to TermAI
       </h1>
 
-      <div className="relative w-full max-w-md mt-40 input-gradient-glow-wrapper rounded-full"> {/* Increased mt from 16 to 24 */}
+      <div className="relative w-full max-w-md mt-40 input-gradient-glow-wrapper rounded-full">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute left-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-1.5 text-muted-foreground hover:text-primary z-10"
+          aria-label="AI Search"
+        >
+          <BrainCircuit size={20} />
+        </Button>
         <Input
           type="text"
           placeholder="Ask me anything..."
           className={cn(
-            "w-full pl-4 pr-10 py-3 text-base md:text-sm", 
+            "w-full pl-12 pr-4 py-3 text-base md:text-sm", // Increased pl for the icon
             "focus:outline-none focus:ring-0"
           )}
-        />
-        <Search
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none" 
-          size={20}
         />
       </div>
     </div>

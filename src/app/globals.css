@@ -108,7 +108,7 @@
 
 .gradient-border {
   border-image: linear-gradient(to right, red, blue) 1;
-  border-width: 2px;
+  border-width: 1px;
   border-style: solid;
 }
 
@@ -186,7 +186,7 @@
     content: "";
     position: absolute;
     inset: -2px; /* Expands 2px outwards from the wrapper's box on all sides */
-    border-radius: inherit; /* Inherits border-radius from .input-gradient-glow-wrapper */
+    border-radius: 50px; /* Inherits border-radius from .input-gradient-glow-wrapper */
     background: linear-gradient(to right, hsl(240, 100%, 50%), hsl(0, 100%, 50%));
     opacity: 0;
     transition: opacity 0.3s ease-in-out;

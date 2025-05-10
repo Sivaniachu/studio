@@ -22,9 +22,14 @@ const tabs: { name: ActiveTab; label: string; icon: React.ElementType }[] = [
 
 // The interactive part of the bar (div with rounded-xl, p-2, containing h-16 buttons) 
 // has an approximate height of 5rem (0.5rem top padding + 4rem button height + 0.5rem bottom padding).
-// To leave 10% (0.5rem) visible when collapsed, we need to translate it down by 90% of its height.
-// Translate amount = 5rem (total height) - 0.5rem (visible part) = 4.5rem.
-const TRANSLATE_Y_COLLAPSED = '4.5rem';
+// The outer div has mb-2 (0.5rem margin), so its border-box starts 0.5rem above viewport bottom.
+// To leave 0.5rem (10% of 5rem) visible when collapsed:
+// The bar needs to be translated down so its top is 0.5rem above viewport bottom.
+// If bar height is 5rem, its bottom will be 4.5rem below viewport bottom.
+// Initial position of border-box bottom: 0.5rem from viewport bottom.
+// Target position of border-box bottom: -4.5rem from viewport bottom.
+// Translation amount = Initial - Target = 0.5rem - (-4.5rem) = 5rem.
+const TRANSLATE_Y_COLLAPSED = '5rem';
 
 
 export default function BottomTabBar({ activeTab, onTabChange }: BottomTabBarProps) {

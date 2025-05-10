@@ -149,7 +149,7 @@ export default function TerminalView() {
       <>
         <span className="text-prompt-gradient">{promptName}</span>
         <span className="text-cmd-prompt">&gt;</span>
-        {currentInput}
+        {currentInput.replace(/ /g, '\u00A0')}
       </>
     );
     addLine(displayInput, "input");
@@ -162,7 +162,7 @@ export default function TerminalView() {
     }
     
     setCurrentInput("");
-    setHistoryIndex(commandHistory.length);
+    setHistoryIndex(commandHistory.length); // Reset history index to allow new commands to be added correctly
     setSuggestions([]);
     setActiveSuggestionIndex(-1);
   };
@@ -198,7 +198,7 @@ export default function TerminalView() {
         const newIndex = historyIndex >= commandHistory.length -1 ? commandHistory.length : historyIndex + 1;
         setHistoryIndex(newIndex);
         setCurrentInput(commandHistory[newIndex] || "");
-         if (newIndex === commandHistory.length) setCurrentInput("");
+         if (newIndex === commandHistory.length) setCurrentInput(""); // Clear input if past the last command
       }
     } else if (e.key === "Tab") {
       e.preventDefault();
@@ -224,39 +224,32 @@ export default function TerminalView() {
     <div 
       className="flex-grow flex flex-col focus:outline-none w-full h-full overflow-hidden"
       onClick={() => inputRef.current?.focus()}
-      tabIndex={-1}
+      tabIndex={-1} // Make the div focusable to ensure onClick works reliably
     >
       <div className="flex-grow overflow-y-auto pr-2">
         {lines.map((line) => (
           <div
             key={line.id}
             className={cn("whitespace-pre-wrap break-words", {
-              "text-cmd-input": line.type === "input",
+              "text-cmd-input": line.type === "input", // Ensure input text color is applied correctly
               "text-cmd-output": line.type === "output",
               "text-cmd-error": line.type === "error",
               "text-cmd-info": line.type === "info",
             })}
           >
-            {/* Special rendering for input lines to handle prompt styling */}
+            {/* Special rendering for input lines to handle prompt styling and prevent duplicate prompt */}
             {line.type === 'input' && typeof line.content === 'object' && React.isValidElement(line.content) ? (
-              line.content
+              line.content // Already formatted input with styled promptName
             ) : (
-              line.type === 'input' && typeof line.content === 'string' && line.content.startsWith(currentPromptString) ? (
-                <>
-                  <span className="text-prompt-gradient">{promptName}</span>
-                  <span className="text-cmd-prompt">&gt;</span>
-                  {line.content.substring(currentPromptString.length)}
-                </>
-              ) : (
-                line.content
-              )
+              line.content // For output, error, info, or plain string inputs
             )}
           </div>
         ))}
         <div className="flex items-center">
           <span className="text-prompt-gradient">{promptName}</span>
           <span className="text-cmd-prompt">&gt;</span>
-          <span className="break-all">{currentInput.replace(/ /g, '\u00A0')}</span>
+          {/* Render the current input with non-breaking spaces to preserve spacing */}
+          <span className="break-all text-cmd-input">{currentInput.replace(/ /g, '\u00A0')}</span>
           <Cursor />
         </div>
         <div ref={terminalEndRef} />
@@ -268,7 +261,7 @@ export default function TerminalView() {
         value={currentInput}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
-        className="opacity-0 w-0 h-0 absolute -top-96 -left-96"
+        className="opacity-0 w-0 h-0 absolute -top-96 -left-96" // Visually hide the input
         aria-label="Command input"
         autoCapitalize="none"
         autoCorrect="off"
@@ -294,13 +287,11 @@ export default function TerminalView() {
           {loadingSuggestions && <div className="text-xs text-muted-foreground p-1">Loading...</div>}
         </div>
       )}
-      <div className="text-xs text-muted-foreground mt-1 shrink-0">
-        Type 'help' for a list of commands. Use Up/Down arrows for history. Tab for suggestions.
-      </div>
     </div>
   );
 }
 
+// Helper function to debounce calls
 function debounce<F extends (...args: any[]) => any>(func: F, waitFor: number) {
   let timeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -312,4 +303,3 @@ function debounce<F extends (...args: any[]) => any>(func: F, waitFor: number) {
       timeout = setTimeout(() => resolve(func(...args)), waitFor);
     });
 }
-

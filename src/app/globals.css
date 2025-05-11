@@ -52,7 +52,7 @@
     --popover: 0 0% 3%;
     --popover-foreground: 0 0% 90%;
 
-    --primary: 120 70% 50%; /* CRT-like green */
+    --primary: 120 70% 50%; /* CRT-like green for active elements, now red-blue gradient */
     --primary-foreground: 0 0% 95%;
 
     --secondary: 0 0% 10%;
@@ -61,30 +61,32 @@
     --muted: 0 0% 8%;
     --muted-foreground: 0 0% 55%;
 
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 90%;
+    --accent: 210 70% 50%; /* Muted blue for selections and highlights */
+    --accent-foreground: 0 0% 95%;
+
 
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 95%;
 
     --border: 0 0% 12%;
     --input: 0 0% 8%; /* Used for default input background */
-    --ring: 120 70% 60%;
+    --ring: 210 70% 60%; /* Muted blue for rings */
 
     /* CmdWeb specific colors */
-    --cmd-prompt-color: 0 0% 85%;
-    --cmd-input-color: 0 0% 95%;
-    --cmd-output-color: 0 0% 85%;
-    --cmd-error-color: 0 80% 70%;
-    --cmd-info-color: 0 0% 70%;
+    --cmd-prompt-color: 0 0% 85%; /* Bright white for prompt text */
+    --cmd-input-color: 0 0% 95%; /* Bright white for user input text */
+    --cmd-output-color: 0 0% 85%; /* Bright white for command output */
+    --cmd-error-color: 0 80% 70%; /* Red for error messages */
+    --cmd-info-color: 0 0% 70%; /* Lighter gray for info messages */
+    
+    /* Suggestions box styling (dark theme) */
+    --cmd-suggestion-bg: 0 0% 5%; /* Very dark background for suggestion box */
+    --cmd-suggestion-text: 0 0% 75%; /* Light gray for suggestion text */
+    --cmd-suggestion-hover-bg: 0 0% 12%; /* Slightly lighter dark for hover */
+    --cmd-suggestion-hover-text: 0 0% 90%; /* Brighter text on hover */
+    --cmd-suggestion-active-bg: 210 60% 35%; /* Muted blue for active suggestion */
+    --cmd-suggestion-active-text: 0 0% 95%; /* White text for active suggestion */
 
-    /* Suggestions box styling */
-    --cmd-suggestion-bg: 0 0% 5%;
-    --cmd-suggestion-text: 0 0% 75%;
-    --cmd-suggestion-hover-bg: 0 0% 12%;
-    --cmd-suggestion-hover-text: 0 0% 90%;
-    --cmd-suggestion-active-bg: 120 60% 35%;
-    --cmd-suggestion-active-text: 0 0% 95%;
 
     /* Sidebar colors (dark theme specific) */
     --sidebar-background: 0 0% 4%;
@@ -106,26 +108,10 @@
   }
 }
 
-.gradient-border {
-  border-image: linear-gradient(to right, red, blue) 1;
- border-width: 1px;
-  border-style: solid;
-}
-
-.focus-visible\:border-gradient {
-  border: 2px solid transparent;
-  background: linear-gradient(to right, red, rgb(0, 229, 255));
-  background-clip: border-box;
- -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-}
-
-
 @layer utilities {
   .text-prompt-gradient {
     @apply bg-gradient-to-r from-red-500 to-blue-500;
- -webkit-background-clip: text;
+    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-fill-color: transparent;
@@ -133,7 +119,7 @@
 
   .text-gradient-active {
     @apply bg-gradient-to-r from-red-500 to-blue-500;
- -webkit-background-clip: text;
+    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-fill-color: transparent;
@@ -144,7 +130,7 @@
   }
   .icon-hover-gradient:hover {
     @apply bg-gradient-to-r from-blue-500 to-red-500;
- -webkit-background-clip: text;
+    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-fill-color: transparent;
@@ -153,7 +139,7 @@
   /* Input gradient glow wrapper styling */
   .input-gradient-glow-wrapper {
     position: relative;
-    display: inline-block;
+    display: inline-block; /* Changed from block to inline-block */
     width: 100%;
     /* border-radius is applied inline in input.tsx as rounded-full */
   }
@@ -167,9 +153,8 @@
     background-size: 100% 100%; /* Ensure gradient fills the border area */
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
-    pointer-events: none;
-    z-index: 0;
-    /* Removed animation: input-border-flow ... */
+    pointer-events: none; /* Allows clicks to pass through to the input */
+    z-index: 0; /* Behind the input content but above parent background */
   }
 
   .input-gradient-glow-wrapper:hover::before,
@@ -179,7 +164,7 @@
 
   .input-gradient-glow-wrapper input {
       position: relative;
-      z-index: 1;
+      z-index: 1; /* Ensure input content is above the ::before pseudo-element */
       /* The input's existing border-2 border-transparent will allow the ::before gradient to show through */
       /* Its bg-background will keep the content area opaque */
   }
@@ -208,18 +193,17 @@
     opacity: 1; /* Make sure it's visible when .processing is active */
   }
 
-
   .text-static-gradient {
     @apply bg-gradient-to-r from-[hsl(0,85%,60%)] to-[hsl(220,85%,60%)] bg-clip-text text-transparent;
-    display: inline-block;
+    display: inline-block; /* Ensures the gradient only applies to the text width */
   }
-
+  
   .text-static-gradient-sweep {
     @apply relative bg-gradient-to-r from-[hsl(0,85%,60%)] to-[hsl(220,85%,60%)] bg-clip-text text-transparent;
-    display: inline-block;
-    position: relative;
+    display: inline-block; /* Necessary for ::after to position correctly relative to text */
+    position: relative; /* For ::after pseudo-element positioning */
   }
-
+  
   .text-static-gradient-sweep::after {
     content: "";
     position: absolute;
@@ -230,19 +214,19 @@
     background: linear-gradient(
       to right,
       transparent 20%,
-      rgba(0, 0, 0, 0.15) 35%,
-      rgba(255, 255, 255, 0.35) 50%,
-      rgba(0, 0, 0, 0.15) 65%,
+      rgba(0, 0, 0, 0.15) 35%,  /* Darker, subtle start of sheen */
+      rgba(255, 255, 255, 0.35) 50%, /* Brighter white center */
+      rgba(0, 0, 0, 0.15) 65%,  /* Darker, subtle end of sheen */
       transparent 80%
     );
     background-size: 250% 100%;
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-text-fill-color: transparent; /* Make the ::after element's text transparent */
     animation: input-sheen-bg-sweep 2s linear infinite; /* Re-use input's animation */
-    pointer-events: none;
+    pointer-events: none; /* Ensure it doesn't interfere with text selection */
   }
-
+  
 
   /* Keyframes for input border flow (retained in case used by Tailwind animate utility elsewhere, but not used by ::before directly anymore) */
   @keyframes input-border-flow {
@@ -250,26 +234,14 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
-
-
-  @keyframes border-glow-animation {
-    from {
-      box-shadow: 0 0 4px 0px hsl(var(--primary) / 0.8),
-                  0 0 6px 0px hsl(var(--ring) / 0.7);
-    }
-    to {
-      box-shadow: 0 0 8px 2px hsl(var(--primary) / 1),
-                  0 0 12px 2px hsl(var(--ring) / 0.9);
-    }
-  }
-
+  
   /* Keyframes for input sheen effect */
   @keyframes input-sheen-bg-sweep {
     0% {
-      background-position: 150% 0;
+      background-position: 150% 0; /* Start from right */
     }
     100% {
-      background-position: -150% 0;
+      background-position: -150% 0; /* End at left */
     }
   }
 }

@@ -41,7 +41,7 @@ export default function HomeSection({ setActiveTab }: HomeSectionProps) {
 
   return (
     <div className="flex flex-col h-full items-center justify-center p-4 text-center">
-      <h1 className="text-5xl font-bold mb-4 text-static-gradient">
+      <h1 className="text-5xl font-bold mb-4 text-static-gradient-sweep">
         Welcome to TermAI
       </h1>
 

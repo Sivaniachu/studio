@@ -130,18 +130,18 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
           )}
         </div>
 
-        <DialogFooter className="sm:justify-between">
+        <DialogFooter className="flex flex-col-reverse items-center sm:flex-row sm:justify-between">
           <DialogClose asChild>
-            <Button type="button" variant="outline" className="focus-visible:ring-0 focus-visible:ring-offset-0 active:scale-95">
+            <Button type="button" variant="outline" className="w-full sm:w-auto focus-visible:ring-0 focus-visible:ring-offset-0 active:scale-95">
               Cancel
             </Button>
           </DialogClose>
-          <div className="interactive-element-glow-wrapper rounded-full inline-block"> {/* Added inline-block */}
+          <div className="interactive-element-glow-wrapper rounded-full inline-block mt-2 sm:mt-0"> {/* Added inline-block */}
             <Button
               type="button"
               onClick={handleSave}
               className={cn(
-                 "w-auto rounded-full bg-background hover:bg-background px-6 h-10 text-sm font-medium text-foreground",
+                 "w-full sm:w-auto rounded-full bg-background hover:bg-background px-6 h-10 text-sm font-medium text-foreground",
                  "focus-visible:ring-0 focus-visible:ring-offset-0 active:scale-95"
               )}
             >

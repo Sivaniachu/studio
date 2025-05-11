@@ -4,10 +4,11 @@ import type { ReactNode } from 'react';
 import React, { useState } from 'react';
 import BottomNavbar, { type ActiveTab } from './BottomNavbar';
 import TerminalView from '@/components/cmd-web/TerminalView';
-import AISection from '@/components/sections/AISection';
+// AISection is not directly rendered if 'ai' tab shows TerminalView
+// import AISection from '@/components/sections/AISection'; 
 import NoteSection from '@/components/sections/NoteSection';
 import SettingsSection from '@/components/sections/SettingsSection';
-import HomeSection from '@/components/sections/HomeSection'; // Import HomeSection
+import HomeSection from '@/components/sections/HomeSection'; 
 
 
 interface AppLayoutClientProps {
@@ -15,19 +16,20 @@ interface AppLayoutClientProps {
 }
 
 export default function AppLayoutClient({ children }: AppLayoutClientProps) {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('home'); // Default to home
+  const [activeTab, setActiveTab] = useState<ActiveTab>('home'); 
 
   const renderContent = () => {
     switch (activeTab) {
       case 'home':
-        return <HomeSection />; // Render HomeSection for 'home' tab
+        return <HomeSection setActiveTab={setActiveTab} />; // Pass setActiveTab
       case 'ai':
         return <TerminalView />; 
       case 'notes':
         return <NoteSection />;
       case 'settings':
         return <SettingsSection />;
-
+      default:
+        return <HomeSection setActiveTab={setActiveTab} />; // Fallback to home
     }
   };
   
@@ -37,9 +39,8 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
         <h1 className="text-lg font-semibold text-foreground">CmdWeb</h1>
       </header>
 
-      {/* Adjusted pb-16 to ensure content doesn't overlap with fully visible navbar */}
       <main className="flex-1 overflow-y-auto pb-16"> 
-        <div className="p-4 md:p-6 lg:p-8 h-full"> {/* Use consistent padding */}
+        <div className="p-4 md:p-6 lg:p-8 h-full">
           {renderContent()}
         </div>
       </main>

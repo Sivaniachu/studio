@@ -121,11 +121,6 @@
   mask-composite: exclude;
 }
 
-/* Moved @keyframes to global scope */
-@keyframes light-sweep-animation {
-  0% { background-position: -125% 0; } /* Start with sweep to the left */
-  100% { background-position: 125% 0; } /* End with sweep to the right */
-}
 
 @layer utilities {
   .text-prompt-gradient { 
@@ -212,11 +207,11 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent; /* Only use the prefixed version */
-    animation: light-sweep-animation 1.5s linear infinite; /* Fast, snappy animation */
+ animation: light-sweep 1.5s linear infinite; /* Fast, snappy animation */
   }
   
   /* Keyframes for the light sweep */
-  @keyframes light-sweep-animation {
+  @keyframes light-sweep {
     0% {
       background-position: 0% 50%; /* Start off-screen to the left */
     }
@@ -227,7 +222,7 @@
   
   /* Optional: Faster sweep on hover */
   .text-static-gradient-sweep:hover::after {
-    animation: light-sweep-animation 0.8s linear infinite; /* Speed up on hover */
+    animation: light-sweep 0.1s linear infinite; /* Speed up on hover */
   }
 
 

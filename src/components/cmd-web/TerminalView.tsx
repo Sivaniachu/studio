@@ -3,10 +3,11 @@
 import { suggestCommand, type SuggestCommandInput, type SuggestCommandOutput } from "@/ai/flows/suggest-command";
 import Cursor from "@/components/cmd-web/Cursor";
 import { useSettings } from "@/context/SettingsContext";
+import { useCommand } from "@/context/CommandContext"; 
 import { cn } from "@/lib/utils";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 
-const APP_VERSION = "1.0.0.2024"; // Static version for 'ver' command
+const APP_VERSION = "1.0.0.2024"; 
 
 interface Line {
   id: string;
@@ -19,18 +20,24 @@ const generateLineId = () => `line-${lineIdCounter++}`;
 
 export default function TerminalView() {
   const { promptName } = useSettings();
-  const currentPromptString = `${promptName}>`;
+  const { commandToExecute, setCommandToExecute } = useCommand();
+  // currentPromptString is not directly used for rendering the prompt, 
+  // promptName is used directly in JSX. Can be removed if not used elsewhere.
+  // const currentPromptString = `${promptName}>`; 
 
-  const initialLines: Line[] = [
-    { id: generateLineId(), content: `CmdWeb [Version ${APP_VERSION}] (Prompt: ${promptName})`, type: "info" },
-    { id: generateLineId(), content: "(c) Firebase Studio. All rights reserved.", type: "info" },
-    { id: generateLineId(), content: <>&nbsp;</>, type: "info" },
-  ];
+  const createInitialLines = useCallback((pName: string) => {
+    lineIdCounter = 0; // Reset counter before generating IDs
+    return [
+      { id: generateLineId(), content: `CmdWeb [Version ${APP_VERSION}] (Prompt: ${pName})`, type: "info" as const },
+      { id: generateLineId(), content: "(c) Firebase Studio. All rights reserved.", type: "info" as const },
+      { id: generateLineId(), content: <>&nbsp;</>, type: "info" as const },
+    ];
+  }, []);
 
-  const [lines, setLines] = useState<Line[]>(initialLines);
+  const [lines, setLines] = useState<Line[]>(() => createInitialLines(promptName));
   const [currentInput, setCurrentInput] = useState("");
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [historyIndex, setHistoryIndex] = useState(-1); // Should be -1 or commandHistory.length initially
   
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
@@ -39,15 +46,10 @@ export default function TerminalView() {
   const terminalEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Update initial lines if promptName changes
   useEffect(() => {
-    setLines([
-      { id: generateLineId(), content: `CmdWeb [Version ${APP_VERSION}] (Prompt: ${promptName})`, type: "info" },
-      { id: generateLineId(), content: "(c) Firebase Studio. All rights reserved.", type: "info" },
-      { id: generateLineId(), content: <>&nbsp;</>, type: "info" },
-    ]);
-    lineIdCounter = 3; // Reset counter considering initial lines
-  }, [promptName]);
+    setLines(createInitialLines(promptName));
+    // lineIdCounter is reset within createInitialLines and correctly incremented
+  }, [promptName, createInitialLines]);
 
 
   const scrollToBottom = () => {
@@ -60,52 +62,18 @@ export default function TerminalView() {
     inputRef.current?.focus();
   }, []);
 
-  const addLine = (content: React.ReactNode, type: Line["type"]) => {
+  const addLine = useCallback((content: React.ReactNode, type: Line["type"]) => {
     setLines((prevLines) => [...prevLines, { id: generateLineId(), content, type }]);
-  };
+  }, []); // setLines is stable
 
-  const fetchSuggestions = useCallback(async (prefix: string) => {
-    if (!prefix.trim() || prefix.includes(" ")) {
-      setSuggestions([]);
-      return;
-    }
-    setLoadingSuggestions(true);
-    try {
-      const result: SuggestCommandOutput = await suggestCommand({ commandPrefix: prefix });
-      setSuggestions(result.suggestions || []);
-      setActiveSuggestionIndex(-1);
-    } catch (error) {
-      console.error("Error fetching suggestions:", error);
-      setSuggestions([]);
-    }
-    setLoadingSuggestions(false);
-  }, []);
-
-  const debouncedFetchSuggestions = useCallback(
-    debounce(fetchSuggestions, 300),
-    [fetchSuggestions]
-  );
-
-  useEffect(() => {
-    if (currentInput) {
-      debouncedFetchSuggestions(currentInput);
-    } else {
-      setSuggestions([]);
-      setActiveSuggestionIndex(-1);
-    }
-  }, [currentInput, debouncedFetchSuggestions]);
-
-  const processCommand = (commandStr: string) => {
+  const processCommand = useCallback((commandStr: string) => {
     const [command, ...args] = commandStr.trim().split(/\s+/);
     const fullArg = args.join(" ");
 
     switch (command.toLowerCase()) {
       case "cls":
-        setLines([
-          { id: generateLineId(), content: `CmdWeb [Version ${APP_VERSION}] (Prompt: ${promptName})`, type: "info" },
-          { id: generateLineId(), content: "(c) Firebase Studio. All rights reserved.", type: "info" },
-          { id: generateLineId(), content: <>&nbsp;</>, type: "info" },
-        ]);
+        // Re-initialize lines using the createInitialLines pattern for consistency
+        setLines(createInitialLines(promptName));
         break;
       case "echo":
         addLine(fullArg || <>&nbsp;</>, "output");
@@ -141,31 +109,80 @@ export default function TerminalView() {
         );
         break;
     }
-  };
+  }, [addLine, promptName, createInitialLines]); // Added createInitialLines dependency for 'cls'
 
-  const handleSubmit = () => {
-    const commandToProcess = currentInput.trim();
+  const submitCommand = useCallback((commandToProcess: string) => {
+    const trimmedCommand = commandToProcess.trim();
     const displayInput = (
       <>
         <span className="text-prompt-gradient">{promptName}</span>
         <span className="text-cmd-prompt">&gt;</span>
-        {currentInput.replace(/ /g, '\u00A0')}
+        {commandToProcess.replace(/ /g, '\u00A0')} 
       </>
     );
     addLine(displayInput, "input");
 
-    if (commandToProcess) {
-      processCommand(commandToProcess);
-      if (commandHistory[commandHistory.length - 1] !== commandToProcess) {
-        setCommandHistory((prev) => [...prev, commandToProcess]);
-      }
+    if (trimmedCommand) {
+      processCommand(trimmedCommand);
+      // Check commandHistory state directly before updating
+      setCommandHistory(prevCmdHistory => {
+        if (prevCmdHistory.length === 0 || prevCmdHistory[prevCmdHistory.length - 1] !== trimmedCommand) {
+          return [...prevCmdHistory, trimmedCommand];
+        }
+        return prevCmdHistory;
+      });
     }
-    
-    setCurrentInput("");
-    setHistoryIndex(commandHistory.length); // Reset history index to allow new commands to be added correctly
+  }, [promptName, processCommand, addLine]);
+
+
+  const handleInternalSubmit = useCallback(() => {
+    submitCommand(currentInput);
+    setCurrentInput(""); 
+    setHistoryIndex(commandHistory.length); // Reset history index after submit
     setSuggestions([]);
     setActiveSuggestionIndex(-1);
-  };
+  }, [currentInput, submitCommand, commandHistory.length]);
+
+
+  useEffect(() => {
+    if (commandToExecute) {
+      submitCommand(commandToExecute);
+      setCommandToExecute(null); 
+      inputRef.current?.focus(); 
+    }
+  }, [commandToExecute, setCommandToExecute, submitCommand]);
+
+  const fetchSuggestions = useCallback(async (prefix: string) => {
+    if (!prefix.trim() || prefix.includes(" ")) {
+      setSuggestions([]);
+      return;
+    }
+    setLoadingSuggestions(true);
+    try {
+      const result: SuggestCommandOutput = await suggestCommand({ commandPrefix: prefix });
+      setSuggestions(result.suggestions || []);
+      setActiveSuggestionIndex(-1);
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+      setSuggestions([]);
+    }
+    setLoadingSuggestions(false);
+  }, []);
+
+  const debouncedFetchSuggestions = useCallback(
+    debounce(fetchSuggestions, 300),
+    [fetchSuggestions]
+  );
+
+  useEffect(() => {
+    if (currentInput) {
+      debouncedFetchSuggestions(currentInput);
+    } else {
+      setSuggestions([]);
+      setActiveSuggestionIndex(-1);
+    }
+  }, [currentInput, debouncedFetchSuggestions]);
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentInput(e.target.value);
@@ -174,7 +191,7 @@ export default function TerminalView() {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      handleSubmit();
+      handleInternalSubmit();
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (suggestions.length > 0 && activeSuggestionIndex !== -1) {
@@ -198,7 +215,7 @@ export default function TerminalView() {
         const newIndex = historyIndex >= commandHistory.length -1 ? commandHistory.length : historyIndex + 1;
         setHistoryIndex(newIndex);
         setCurrentInput(commandHistory[newIndex] || "");
-         if (newIndex === commandHistory.length) setCurrentInput(""); // Clear input if past the last command
+         if (newIndex === commandHistory.length) setCurrentInput("");
       }
     } else if (e.key === "Tab") {
       e.preventDefault();
@@ -224,31 +241,29 @@ export default function TerminalView() {
     <div 
       className="flex-grow flex flex-col focus:outline-none w-full h-full overflow-hidden"
       onClick={() => inputRef.current?.focus()}
-      tabIndex={-1} // Make the div focusable to ensure onClick works reliably
+      tabIndex={-1} 
     >
       <div className="flex-grow overflow-y-auto pr-2">
         {lines.map((line) => (
           <div
             key={line.id}
             className={cn("whitespace-pre-wrap break-words", {
-              "text-cmd-input": line.type === "input", // Ensure input text color is applied correctly
+              "text-cmd-input": line.type === "input", 
               "text-cmd-output": line.type === "output",
               "text-cmd-error": line.type === "error",
               "text-cmd-info": line.type === "info",
             })}
           >
-            {/* Special rendering for input lines to handle prompt styling and prevent duplicate prompt */}
             {line.type === 'input' && typeof line.content === 'object' && React.isValidElement(line.content) ? (
-              line.content // Already formatted input with styled promptName
+              line.content 
             ) : (
-              line.content // For output, error, info, or plain string inputs
+              line.content 
             )}
           </div>
         ))}
         <div className="flex items-center">
           <span className="text-prompt-gradient">{promptName}</span>
           <span className="text-cmd-prompt">&gt;</span>
-          {/* Render the current input with non-breaking spaces to preserve spacing */}
           <span className="break-all text-cmd-input">{currentInput.replace(/ /g, '\u00A0')}</span>
           <Cursor />
         </div>
@@ -261,7 +276,7 @@ export default function TerminalView() {
         value={currentInput}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
-        className="opacity-0 w-0 h-0 absolute -top-96 -left-96" // Visually hide the input
+        className="opacity-0 w-0 h-0 absolute -top-96 -left-96" 
         aria-label="Command input"
         autoCapitalize="none"
         autoCorrect="off"
@@ -291,7 +306,6 @@ export default function TerminalView() {
   );
 }
 
-// Helper function to debounce calls
 function debounce<F extends (...args: any[]) => any>(func: F, waitFor: number) {
   let timeout: ReturnType<typeof setTimeout> | null = null;
 

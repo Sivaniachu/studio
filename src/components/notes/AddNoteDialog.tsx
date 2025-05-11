@@ -136,7 +136,7 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
               Cancel
             </Button>
           </DialogClose>
-          <div className="interactive-element-glow-wrapper rounded-full">
+          <div className="interactive-element-glow-wrapper rounded-full inline-block"> {/* Added inline-block */}
             <Button
               type="button"
               onClick={handleSave}

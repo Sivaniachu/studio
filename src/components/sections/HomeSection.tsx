@@ -47,7 +47,7 @@ export default function HomeSection({ setActiveTab }: HomeSectionProps) {
 
       <div className={cn(
         "relative w-full max-w-md mt-40 input-gradient-glow-wrapper rounded-full",
-        isProcessing && "processing" // Add 'processing' class for sheen effect
+        isProcessing && "processing" 
         )}>
         <Button
           variant="ghost"
@@ -55,14 +55,19 @@ export default function HomeSection({ setActiveTab }: HomeSectionProps) {
           className={cn(
             "group absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-1.5 z-10",
             "hover:bg-transparent", 
-            "focus-visible:ring-0 focus-visible:ring-offset-0" // Remove focus ring for better visual with glow
+            "focus-visible:ring-0 focus-visible:ring-offset-0" 
           )}
           aria-label="AI Search"
           onClick={handleCommandSubmit}
-          disabled={isProcessing} // Disable button when processing
+          disabled={isProcessing} 
         >
           <Sparkles
-            className="w-5 h-5 transition-colors group-hover:icon-hover-gradient"
+            className={cn(
+              "w-5 h-5",
+              isProcessing 
+                ? "animate-processing-icon" 
+                : "transition-colors group-hover:icon-hover-gradient"
+            )}
             aria-hidden="true"
           />
         </Button>
@@ -71,13 +76,13 @@ export default function HomeSection({ setActiveTab }: HomeSectionProps) {
           placeholder="Ask me anything..."
           className={cn(
             "w-full pl-4 pr-12 py-3 text-base md:text-sm rounded-full", 
-            "focus:outline-none focus:ring-0" // Ensure no default browser outline/ring interferes with custom glow
+            "focus:outline-none focus:ring-0" 
           )}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          disabled={isProcessing} // Disable input when processing
-          readOnly={isProcessing} // Make input read-only when processing
+          disabled={isProcessing} 
+          readOnly={isProcessing} 
         />
       </div>
     </div>

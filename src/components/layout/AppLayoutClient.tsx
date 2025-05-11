@@ -51,8 +51,8 @@ export default function AppLayoutClient({ children }: AppLayoutClientProps) {
           <Image
             src={logoImage}
             alt="CmdWeb Logo"
-            width={80} 
-            height={32}
+            width={40} 
+            height={40}
             priority 
             className="object-contain"
             data-ai-hint="logo brand"

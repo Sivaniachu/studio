@@ -192,6 +192,14 @@
     z-index: 2; /* Ensure sheen is on top of the input's ::before glow */
     opacity: 1; /* Make sure it's visible when .processing is active */
   }
+  
+  .input-gradient-glow-wrapper.processing:hover::before {
+    opacity: 1; /* Keep border glow visible during processing even on hover */
+  }
+  .input-gradient-glow-wrapper.processing:focus-within::before {
+    opacity: 1; /* Keep border glow visible during processing even on focus */
+  }
+  
 
   .text-static-gradient {
     @apply bg-gradient-to-r from-[hsl(0,85%,60%)] to-[hsl(220,85%,60%)] bg-clip-text text-transparent;
@@ -243,5 +251,17 @@
     100% {
       background-position: -150% 0; /* End at left */
     }
+  }
+
+  /* Keyframes for processing icon spin */
+  @keyframes processing-icon-spin {
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(360deg); animation-timing-function: ease-in; } /* Fast part (0.5s of 2.5s total) */
+    60% { transform: rotate(720deg); animation-timing-function: ease-out; } /* Slow part (1.0s of 2.5s total) */
+    100% { transform: rotate(720deg); } /* Pause (1.0s of 2.5s total) */
+  }
+
+  .animate-processing-icon {
+    animation: processing-icon-spin 2.5s linear infinite;
   }
 }

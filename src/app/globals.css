@@ -209,6 +209,11 @@
   }
 
 
+  .text-static-gradient {
+    @apply bg-gradient-to-r from-[hsl(0,85%,60%)] to-[hsl(220,85%,60%)] bg-clip-text text-transparent;
+    display: inline-block;
+  }
+
   .text-static-gradient-sweep {
     @apply relative bg-gradient-to-r from-[hsl(0,85%,60%)] to-[hsl(220,85%,60%)] bg-clip-text text-transparent;
     display: inline-block;

@@ -23,12 +23,13 @@ export default function HomeSection({ setActiveTab }: HomeSectionProps) {
     if (inputValue.trim() && !isProcessing) {
       setIsProcessing(true);
       
+      // Simulate processing delay
       setTimeout(() => {
         setCommandToExecute(inputValue.trim());
         setActiveTab('ai'); 
         setInputValue(""); 
         setIsProcessing(false);
-      }, 5000);
+      }, 5000); // 5-second delay
     }
   };
 
@@ -40,7 +41,7 @@ export default function HomeSection({ setActiveTab }: HomeSectionProps) {
 
   return (
     <div className="flex flex-col h-full items-center justify-center p-4 text-center">
-      <h1 className="text-5xl font-bold mb-4 text-static-gradient-sweep">
+      <h1 className="text-5xl font-bold mb-4 text-static-gradient">
         Welcome to TermAI
       </h1>
 
@@ -54,7 +55,7 @@ export default function HomeSection({ setActiveTab }: HomeSectionProps) {
           className={cn(
             "group absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-1.5 z-10",
             "hover:bg-transparent", 
-            "focus-visible:ring-0 focus-visible:ring-offset-0"
+            "focus-visible:ring-0 focus-visible:ring-offset-0" // Remove focus ring for better visual with glow
           )}
           aria-label="AI Search"
           onClick={handleCommandSubmit}
@@ -70,7 +71,7 @@ export default function HomeSection({ setActiveTab }: HomeSectionProps) {
           placeholder="Ask me anything..."
           className={cn(
             "w-full pl-4 pr-12 py-3 text-base md:text-sm rounded-full", 
-            "focus:outline-none focus:ring-0"
+            "focus:outline-none focus:ring-0" // Ensure no default browser outline/ring interferes with custom glow
           )}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}

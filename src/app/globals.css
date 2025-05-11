@@ -196,21 +196,22 @@
     background: linear-gradient(
       to right,
       transparent 20%,
-      rgba(255, 255, 255, 0.35) 40%,
-      rgba(255, 255, 255, 0.35) 60%,
+      rgba(0, 0, 0, 0.15) 35%,  /* Darker, subtle start of sheen */
+      rgba(255, 255, 255, 0.35) 50%, /* Brighter white center */
+      rgba(0, 0, 0, 0.15) 65%,  /* Darker, subtle end of sheen */
       transparent 80%
     );
     background-size: 250% 100%;
-    animation: input-sheen-bg-sweep 2s linear infinite; /* Slowed down from 1s to 2s */
+    animation: input-sheen-bg-sweep 2s linear infinite; 
     pointer-events: none;
-    z-index: 2; /* Above glow, below button/text */
+    z-index: 2; 
     opacity: 1; 
   }
 
 
   .text-static-gradient-sweep {
     @apply relative bg-gradient-to-r from-[hsl(0,85%,60%)] to-[hsl(220,85%,60%)] bg-clip-text text-transparent;
-    display: inline-block; /* Ensures the element wraps tightly around the text */
+    display: inline-block; 
     position: relative;
   }
   
@@ -224,33 +225,33 @@
     background: linear-gradient(
       to right,
       transparent 0%,
-      rgba(255, 255, 255, 0.7) 50%, /* Sharper, brighter sweep */
+      rgba(255, 255, 255, 0.7) 50%, 
       transparent 100%
     );
-    background-size: 200% 100%; /* Wider gradient for smooth animation */
+    background-size: 200% 100%; 
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent; /* Only use the prefixed version */
- animation: light-sweep 1.5s linear infinite; /* Fast, snappy animation */
+    -webkit-text-fill-color: transparent; 
+    animation: light-sweep 1.5s linear infinite; 
   }
   
   /* Keyframes for the light sweep */
   @keyframes light-sweep {
     0% {
-      background-position: 0% 50%; /* Start off-screen to the left */
+      background-position: 0% 50%; 
     }
     100% {
-      background-position: 200% 50%; /* Move fully to the right */
+      background-position: 200% 50%; 
     }
   }
   
   /* Optional: Faster sweep on hover */
   .text-static-gradient-sweep:hover::after {
-    animation: light-sweep 0.1s linear infinite; /* Speed up on hover */
+    animation: light-sweep 0.1s linear infinite; 
   }
 
 
-  @keyframes border-glow-animation { /* This is for a different box-shadow glow, not currently used by input */
+  @keyframes border-glow-animation { 
     from {
       box-shadow: 0 0 4px 0px hsl(var(--primary) / 0.8),
                   0 0 6px 0px hsl(var(--ring) / 0.7);
@@ -271,4 +272,3 @@
     }
   }
 }
-

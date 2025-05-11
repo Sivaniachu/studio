@@ -136,7 +136,7 @@ export default {
         'border-glow': 'border-glow-animation 1.5s infinite alternate', 
         'input-border-flow': 'input-border-flow 4s linear infinite', 
         'light-sweep': 'light-sweep 1.5s linear infinite',
-        'input-sheen-bg-sweep': 'input-sheen-bg-sweep 1s linear infinite', /* Added */
+        'input-sheen-bg-sweep': 'input-sheen-bg-sweep 2s linear infinite', /* Slowed down from 1s to 2s */
   		}
   	}
   },

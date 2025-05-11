@@ -201,7 +201,7 @@
       transparent 80%
     );
     background-size: 250% 100%;
-    animation: input-sheen-bg-sweep 1s linear infinite;
+    animation: input-sheen-bg-sweep 2s linear infinite; /* Slowed down from 1s to 2s */
     pointer-events: none;
     z-index: 2; /* Above glow, below button/text */
     opacity: 1; 

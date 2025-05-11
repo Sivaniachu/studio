@@ -12,7 +12,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"; // Standard ShadCN Input
+import { Input } from "@/components/ui/input"; 
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Sparkles } from "lucide-react";
@@ -32,7 +32,6 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
 
   useEffect(() => {
     if (isOpen) {
-      // Reset fields when dialog opens
       setTitle("");
       setContent("");
       setError(null);
@@ -49,19 +48,15 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
       setError("Note content cannot be empty.");
       return;
     }
+    setError(null); // Clear error on successful save
     onSave({ title, content });
-    // onOpenChange(false); // Dialog will be closed by parent or DialogClose
   };
 
   const handleSummarizeClick = () => {
     setIsSummarizing(true);
-    // Placeholder for actual summarization logic
-    // Simulate processing for demo
     setTimeout(() => {
       setIsSummarizing(false);
-      // console.log("Summarize action triggered for content:", content);
-      // Potentially update content or show summarized version
-    }, 2500); // Corresponds to animation duration
+    }, 2500); 
   };
 
   return (
@@ -78,27 +73,30 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
             <Label htmlFor="title" className="text-right text-foreground">
               Title
             </Label>
-            {/* Standard Input, no glow wrapper, ensure it does not use .input-gradient-glow-wrapper by default */}
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="col-span-3 h-10 bg-input text-foreground placeholder:text-muted-foreground focus-visible:ring-ring border-border" 
-              placeholder="Enter note title"
-            />
+            <div className="col-span-3 interactive-element-glow-wrapper rounded-md">
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full h-10 bg-input text-foreground placeholder:text-muted-foreground"
+                placeholder="Enter note title"
+              />
+            </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="content" className="text-right text-foreground self-start pt-2">
               Note
             </Label>
             <div className="col-span-3 relative">
-              <Textarea
-                id="content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="min-h-[120px] w-full pr-12 bg-input text-foreground placeholder:text-muted-foreground focus-visible:ring-ring border-border"
-                placeholder="Write your note here..."
-              />
+              <div className="interactive-element-glow-wrapper rounded-md">
+                <Textarea
+                  id="content"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  className="min-h-[120px] w-full pr-12 bg-input text-foreground placeholder:text-muted-foreground"
+                  placeholder="Write your note here..."
+                />
+              </div>
               <Button
                 variant="ghost"
                 size="icon"
@@ -121,9 +119,11 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
               </Button>
             </div>
           </div>
-          {error && (
-            <p className="col-span-4 text-sm text-destructive text-center">{error}</p>
-          )}
+          <div className="col-span-4 h-5"> {/* Reserve space for error message */}
+            {error && (
+              <p className="text-sm text-destructive text-center">{error}</p>
+            )}
+          </div>
         </div>
         <DialogFooter className="sm:justify-between">
           <DialogClose asChild>
@@ -131,13 +131,13 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
               Cancel
             </Button>
           </DialogClose>
-          <div className="button-pseudo-gradient-border rounded-full">
+          <div className="interactive-element-glow-wrapper rounded-full">
             <Button
               type="button"
               onClick={handleSave}
               className={cn(
-                 "w-auto rounded-full bg-background px-6 h-10 text-sm font-medium text-foreground", // Adjusted size
-                 "focus-visible:ring-0 focus-visible:ring-offset-0"
+                 "w-auto rounded-full bg-background px-6 h-10 text-sm font-medium text-foreground",
+                 "focus-visible:ring-0 focus-visible:ring-offset-0" // Handled by wrapper
               )}
             >
               Save Note

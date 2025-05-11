@@ -52,7 +52,7 @@
     --popover: 0 0% 3%;
     --popover-foreground: 0 0% 90%;
 
-    --primary: 120 70% 50%; /* CRT-like green for active elements, now red-blue gradient */
+    --primary: 210 70% 50%; /* Muted Blue - was 120 70% 50% (green) */
     --primary-foreground: 0 0% 95%;
 
     --secondary: 0 0% 10%;
@@ -136,25 +136,25 @@
     text-fill-color: transparent;
   }
 
-  /* Input gradient glow wrapper styling */
+  /* Input gradient glow wrapper styling FOR HOME PAGE INPUT */
   .input-gradient-glow-wrapper {
     position: relative;
     display: inline-block; 
-    /* width: 100%; removed to allow natural width for inline-block */
-    /* border-radius is applied inline in input.tsx as rounded-full */
+    /* width: 100%; */ /* Removed to allow natural width for inline-block, set w-full in HomeSection */
+    /* border-radius is applied inline in HomeSection as rounded-full */
   }
 
   .input-gradient-glow-wrapper::before {
     content: "";
     position: absolute;
-    inset: -2px; /* Expands 2px outwards from the wrapper's box on all sides */
-    border-radius: 9999px; /* Match input's rounded-full (e.g., Tailwind's rounded-full) */
-    background: linear-gradient(to right, hsl(0, 85%, 60%), hsl(220, 85%, 60%)); /* Static Red to Blue gradient */
-    background-size: 100% 100%; /* Ensure gradient fills the border area */
+    inset: -2px; 
+    border-radius: inherit; /* Inherits from the wrapper (e.g. rounded-full) */
+    background: linear-gradient(to right, hsl(0, 85%, 60%), hsl(220, 85%, 60%)); 
+    background-size: 100% 100%; 
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
-    pointer-events: none; /* Allows clicks to pass through to the input */
-    z-index: 0; /* Behind the input content but above parent background */
+    pointer-events: none; 
+    z-index: 0; 
   }
 
   .input-gradient-glow-wrapper:hover::before,
@@ -164,12 +164,9 @@
 
   .input-gradient-glow-wrapper input {
       position: relative;
-      z-index: 1; /* Ensure input content is above the ::before pseudo-element */
-      /* The input's existing border-2 border-transparent will allow the ::before gradient to show through */
-      /* Its bg-background will keep the content area opaque */
+      z-index: 1; 
   }
 
-  /* Reflective sheen effect for input during processing */
   .input-gradient-glow-wrapper.processing::after {
     content: "";
     position: absolute;
@@ -177,39 +174,38 @@
     left: 0;
     width: 100%;
     height: 100%;
-    border-radius: 9999px; /* Match wrapper's rounded-full */
+    border-radius: inherit; /* Match wrapper's rounding */
     background: linear-gradient(
       to right,
       transparent 20%,
-      rgba(0, 0, 0, 0.15) 35%,  /* Darker, subtle start of sheen */
-      rgba(255, 255, 255, 0.35) 50%, /* Brighter white center */
-      rgba(0, 0, 0, 0.15) 65%,  /* Darker, subtle end of sheen */
+      rgba(0, 0, 0, 0.15) 35%,  
+      rgba(255, 255, 255, 0.35) 50%, 
+      rgba(0, 0, 0, 0.15) 65%,  
       transparent 80%
     );
     background-size: 250% 100%;
     animation: input-sheen-bg-sweep 2s linear infinite;
     pointer-events: none;
-    z-index: 2; /* Ensure sheen is on top of the input's ::before glow */
-    opacity: 1; /* Make sure it's visible when .processing is active */
+    z-index: 2; 
+    opacity: 1; 
   }
   
-  .input-gradient-glow-wrapper.processing:hover::before {
-    opacity: 1; /* Keep border glow visible during processing even on hover */
-  }
+  .input-gradient-glow-wrapper.processing:hover::before,
   .input-gradient-glow-wrapper.processing:focus-within::before {
-    opacity: 1; /* Keep border glow visible during processing even on focus */
+    opacity: 1; 
   }
   
-
+  /* Static gradient text (non-animated background) */
   .text-static-gradient {
     @apply bg-gradient-to-r from-[hsl(0,85%,60%)] to-[hsl(220,85%,60%)] bg-clip-text text-transparent;
-    display: inline-block; /* Ensures the gradient only applies to the text width */
+    display: inline-block; 
   }
   
+  /* Text with static gradient AND sweeping light effect */
   .text-static-gradient-sweep {
-    @apply relative bg-gradient-to-r from-[hsl(0,85%,60%)] to-[hsl(220,85%,60%)] bg-clip-text text-transparent;
-    display: inline-block; /* Necessary for ::after to position correctly relative to text */
-    position: relative; /* For ::after pseudo-element positioning */
+    @apply bg-gradient-to-r from-[hsl(0,85%,60%)] to-[hsl(220,85%,60%)] bg-clip-text text-transparent;
+    display: inline-block; 
+    position: relative; 
   }
   
   .text-static-gradient-sweep::after {
@@ -222,80 +218,112 @@
     background: linear-gradient(
       to right,
       transparent 20%,
-      rgba(0, 0, 0, 0.15) 35%,  /* Darker, subtle start of sheen */
-      rgba(255, 255, 255, 0.35) 50%, /* Brighter white center */
-      rgba(0, 0, 0, 0.15) 65%,  /* Darker, subtle end of sheen */
+      rgba(0, 0, 0, 0.15) 35%,  
+      rgba(255, 255, 255, 0.35) 50%, 
+      rgba(0, 0, 0, 0.15) 65%,  
       transparent 80%
     );
     background-size: 250% 100%;
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent; /* Make the ::after element's text transparent */
-    animation: input-sheen-bg-sweep 2s linear infinite; /* Re-use input's animation */
-    pointer-events: none; /* Ensure it doesn't interfere with text selection */
+    /* Text fill color should be transparent for the ::after so the original text's gradient shows through where the ::after is transparent */
+     -webkit-text-fill-color: transparent; 
+    animation: input-sheen-bg-sweep 2s linear infinite; 
+    pointer-events: none; 
   }
 
-  /* Wrapper for buttons needing a gradient border on hover/focus */
+  /* Wrapper for buttons needing a gradient border on hover/focus - general purpose */
+  /* This one was specifically for buttons with a MASKED border. */
   .button-pseudo-gradient-border {
     position: relative;
-    display: inline-flex; /* To wrap button tightly */
-    border-radius: 9999px; /* Match button's rounded-full */
+    display: inline-flex; 
+    border-radius: inherit; /* Can be overridden by applying rounded-* on this wrapper directly */
   }
 
   .button-pseudo-gradient-border::before {
     content: '';
     position: absolute;
-    inset: -2px; /* Controls the thickness of the apparent border */
-    border-radius: inherit; /* Inherit from wrapper */
+    inset: -1px; /* Adjusted for more visibility, was -2px */
+    border-radius: inherit; 
     background: linear-gradient(to right, hsl(0, 85%, 60%), hsl(220, 85%, 60%));
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
     pointer-events: none;
-    z-index: -1; /* Behind the button content */
-    -webkit-mask: /* Create a mask to make it look like a border */
+    z-index: -1; 
+    -webkit-mask: 
       linear-gradient(#fff 0 0) content-box, 
       linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor; /* Use xor for newer browsers */
-    mask-composite: exclude; /* Standard property */
+    -webkit-mask-composite: xor; 
+    mask-composite: exclude; 
   }
 
   .button-pseudo-gradient-border:hover::before,
-  .button-pseudo-gradient-border:focus-within::before { /* :focus-within for accessibility with keyboard */
+  .button-pseudo-gradient-border:focus-within::before { 
     opacity: 1;
   }
 
-  /* Ensure the button itself has a transparent border to let the pseudo-element show */
-  /* And a background to cover what's behind it */
   .button-pseudo-gradient-border > button {
-    border: 2px solid transparent !important; /* Override default button border */
-    background-color: hsl(var(--background)) !important; /* Or card background if appropriate */
+    border: 1px solid transparent !important; /* Was 2px, adjusted with inset for pseudo */
+    background-color: hsl(var(--background)) !important; 
     position: relative;
-    z-index: 1; /* Ensure button content is above the pseudo-element */
+    z-index: 1; 
   }
   
+  /* NEW: General purpose interactive element glow wrapper (for inputs, textareas, buttons in dialog) */
+  .interactive-element-glow-wrapper {
+    position: relative;
+    display: block; /* Use block or inline-block as appropriate for layout */
+    /* Apply border-radius on the wrapper itself where used (e.g., rounded-md, rounded-full) */
+  }
 
-  /* Keyframes for input border flow (retained in case used by Tailwind animate utility elsewhere, but not used by ::before directly anymore) */
+  .interactive-element-glow-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: -2px; /* Controls border thickness */
+    border-radius: inherit; /* Inherit from wrapper's border-radius */
+    background: linear-gradient(to right, hsl(0, 85%, 60%), hsl(220, 85%, 60%)); /* Red to Blue gradient */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+    z-index: 0; /* Behind the actual element */
+  }
+
+  .interactive-element-glow-wrapper:hover::before,
+  .interactive-element-glow-wrapper:focus-within::before {
+    opacity: 1;
+  }
+
+  .interactive-element-glow-wrapper > input,
+  .interactive-element-glow-wrapper > textarea,
+  .interactive-element-glow-wrapper > button {
+    position: relative;
+    z-index: 1; /* Element content above the glow */
+    border: 2px solid transparent !important; /* Make element border transparent to show pseudo-element glow */
+    /* Ensure the element's background is opaque. Specific background colors should be set on the element itself. */
+    /* e.g., bg-input for inputs/textareas, bg-background for buttons, etc. */
+  }
+  
   @keyframes input-border-flow {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
   
-  /* Keyframes for input sheen effect */
   @keyframes input-sheen-bg-sweep {
     0% {
-      background-position: 150% 0; /* Start from right */
+      background-position: 150% 0; 
     }
     100% {
-      background-position: -150% 0; /* End at left */
+      background-position: -150% 0; 
     }
   }
 
-  /* Keyframes for processing icon spin */
   @keyframes processing-icon-spin {
     0% { transform: rotate(0deg); }
-    60% { transform: rotate(360deg); } /* Slow rotation for 1.5s (60% of 2.5s) */
-    100% { transform: rotate(360deg); } /* Pause for 1s (40% of 2.5s) */
+    /* 60% of 2.5s is 1.5s for rotation */
+    60% { transform: rotate(360deg); } 
+    /* Pause for 1s (40% of 2.5s) */
+    100% { transform: rotate(360deg); } 
   }
 
   .animate-processing-icon {

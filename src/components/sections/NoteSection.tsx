@@ -56,12 +56,12 @@ export default function NoteSection() {
     <div className="p-4 h-full flex flex-col">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold text-foreground">Your Notes</h2>
-        <div className="button-pseudo-gradient-border rounded-full"> {/* Wrapper for the effect */}
+        <div className="interactive-element-glow-wrapper rounded-full"> {/* Wrapper for the glow effect */}
           <Button
             onClick={() => setIsAddNoteDialogOpen(true)}
             className={cn(
               "w-auto rounded-full bg-background px-6 h-10 text-sm font-medium text-foreground shadow-md", 
-              "focus-visible:ring-0 focus-visible:ring-offset-0 active:scale-95" // Added active:scale-95
+              "focus-visible:ring-0 focus-visible:ring-offset-0 active:scale-95"
             )}
           >
             <PlusCircle className="mr-2 h-5 w-5" /> Add Your Note
@@ -91,3 +91,4 @@ export default function NoteSection() {
     </div>
   );
 }
+

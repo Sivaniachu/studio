@@ -87,12 +87,12 @@
     --cmd-suggestion-active-text: 0 0% 95%;
 
     /* Sidebar colors (dark theme specific) */
-    --sidebar-background: 0 0% 4%; 
-    --sidebar-foreground: 0 0% 85%; 
-    --sidebar-primary: 120 70% 50%; 
+    --sidebar-background: 0 0% 4%;
+    --sidebar-foreground: 0 0% 85%;
+    --sidebar-primary: 120 70% 50%;
     --sidebar-primary-foreground: 0 0% 95%;
-    --sidebar-accent: 0 0% 10%; 
-    --sidebar-accent-foreground: 0 0% 90%; 
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 0 0% 90%;
     --sidebar-border: 0 0% 8%;
     --sidebar-ring: 120 70% 60%;
   }
@@ -101,7 +101,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-mono; 
+    @apply bg-background text-foreground font-mono;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
@@ -123,7 +123,7 @@
 
 
 @layer utilities {
-  .text-prompt-gradient { 
+  .text-prompt-gradient {
     @apply bg-gradient-to-r from-red-500 to-blue-500;
  -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -131,7 +131,7 @@
     text-fill-color: transparent;
   }
 
-  .text-gradient-active { 
+  .text-gradient-active {
     @apply bg-gradient-to-r from-red-500 to-blue-500;
  -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -149,11 +149,11 @@
     background-clip: text;
     text-fill-color: transparent;
   }
-  
+
   /* Input gradient glow wrapper styling */
   .input-gradient-glow-wrapper {
     position: relative;
-    display: inline-block; 
+    display: inline-block;
     width: 100%;
     /* border-radius is applied inline in input.tsx as rounded-full */
   }
@@ -163,23 +163,23 @@
     position: absolute;
     inset: -2px; /* Expands 2px outwards from the wrapper's box on all sides */
     border-radius: 9999px; /* Match input's rounded-full (e.g., Tailwind's rounded-full) */
-    background: linear-gradient(to right, hsl(0, 85%, 60%), hsl(220, 85%, 60%), hsl(0, 85%, 60%)); /* Red -> Blue -> Red gradient */
-    background-size: 300% 100%; /* Size for animation */
+    background: linear-gradient(to right, hsl(0, 85%, 60%), hsl(220, 85%, 60%)); /* Static Red to Blue gradient */
+    background-size: 100% 100%; /* Ensure gradient fills the border area */
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
-    pointer-events: none; 
-    z-index: 0; 
-    animation: input-border-flow 4s linear infinite; /* Apply Tailwind animation */
+    pointer-events: none;
+    z-index: 0;
+    /* Removed animation: input-border-flow ... */
   }
-  
+
   .input-gradient-glow-wrapper:hover::before,
   .input-gradient-glow-wrapper:focus-within::before {
     opacity: 1;
   }
 
   .input-gradient-glow-wrapper input {
-      position: relative; 
-      z-index: 1; 
+      position: relative;
+      z-index: 1;
       /* The input's existing border-2 border-transparent will allow the ::before gradient to show through */
       /* Its bg-background will keep the content area opaque */
   }
@@ -202,19 +202,19 @@
       transparent 80%
     );
     background-size: 250% 100%;
-    animation: input-sheen-bg-sweep 2s linear infinite; 
+    animation: input-sheen-bg-sweep 2s linear infinite;
     pointer-events: none;
-    z-index: 2; 
-    opacity: 1; 
+    z-index: 2;
+    opacity: 1;
   }
 
 
   .text-static-gradient-sweep {
     @apply relative bg-gradient-to-r from-[hsl(0,85%,60%)] to-[hsl(220,85%,60%)] bg-clip-text text-transparent;
-    display: inline-block; 
+    display: inline-block;
     position: relative;
   }
-  
+
   .text-static-gradient-sweep::after {
     content: "";
     position: absolute;
@@ -225,33 +225,40 @@
     background: linear-gradient(
       to right,
       transparent 0%,
-      rgba(255, 255, 255, 0.7) 50%, 
+      rgba(255, 255, 255, 0.7) 50%,
       transparent 100%
     );
-    background-size: 200% 100%; 
+    background-size: 200% 100%;
     -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent; 
-    animation: light-sweep 1.5s linear infinite; 
+    -webkit-text-fill-color: transparent;
+    animation: light-sweep 1.5s linear infinite;
   }
-  
+
   /* Keyframes for the light sweep */
   @keyframes light-sweep {
     0% {
-      background-position: 0% 50%; 
+      background-position: 0% 50%;
     }
     100% {
-      background-position: 200% 50%; 
+      background-position: 200% 50%;
     }
   }
-  
+
   /* Optional: Faster sweep on hover */
   .text-static-gradient-sweep:hover::after {
-    animation: light-sweep 0.1s linear infinite; 
+    animation: light-sweep 0.1s linear infinite;
+  }
+
+  /* Keyframes for input border flow (retained in case used by Tailwind animate utility elsewhere, but not used by ::before directly anymore) */
+  @keyframes input-border-flow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 
 
-  @keyframes border-glow-animation { 
+  @keyframes border-glow-animation {
     from {
       box-shadow: 0 0 4px 0px hsl(var(--primary) / 0.8),
                   0 0 6px 0px hsl(var(--ring) / 0.7);
@@ -265,10 +272,10 @@
   /* Keyframes for input sheen effect */
   @keyframes input-sheen-bg-sweep {
     0% {
-      background-position: 150% 0; 
+      background-position: 150% 0;
     }
     100% {
-      background-position: -150% 0; 
+      background-position: -150% 0;
     }
   }
 }

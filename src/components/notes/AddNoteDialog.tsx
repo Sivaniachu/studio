@@ -62,7 +62,7 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl bg-card"> {/* Increased width */}
+      <DialogContent className="sm:max-w-md bg-card">
         <DialogHeader>
           <DialogTitle className="text-foreground">Add New Note</DialogTitle>
           <DialogDescription className="text-muted-foreground">
@@ -70,9 +70,7 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
           </DialogDescription>
         </DialogHeader>
 
-        {/* Grid for side-by-side layout on medium screens and up */}
-        <div className="grid md:grid-cols-2 gap-x-6 gap-y-4 py-4">
-          {/* Title Section */}
+        <div className="grid gap-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="title" className="text-foreground">
               Title
@@ -88,12 +86,11 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
             </div>
           </div>
 
-          {/* Note Section */}
           <div className="space-y-2">
             <Label htmlFor="content" className="text-foreground">
               Note
             </Label>
-            <div className="relative"> {/* Wrapper for Textarea and Sparkles button */}
+            <div className="relative">
               <div className="interactive-element-glow-wrapper rounded-md">
                 <Textarea
                   id="content"
@@ -127,8 +124,7 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
           </div>
         </div>
         
-        {/* Reserve space for error message, ensuring it's below the grid */}
-        <div className="h-5 mb-4"> 
+        <div className="h-5 mb-2"> 
           {error && (
             <p className="text-sm text-destructive text-center">{error}</p>
           )}
@@ -145,7 +141,7 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
               type="button"
               onClick={handleSave}
               className={cn(
-                 "w-auto rounded-full bg-background px-6 h-10 text-sm font-medium text-foreground",
+                 "w-auto rounded-full bg-background hover:bg-background px-6 h-10 text-sm font-medium text-foreground",
                  "focus-visible:ring-0 focus-visible:ring-offset-0 active:scale-95"
               )}
             >

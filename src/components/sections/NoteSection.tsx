@@ -60,7 +60,7 @@ export default function NoteSection() {
           <Button
             onClick={() => setIsAddNoteDialogOpen(true)}
             className={cn(
-              "w-auto rounded-full bg-background px-6 h-10 text-sm font-medium text-foreground shadow-md", 
+              "w-auto rounded-full bg-background hover:bg-background px-6 h-10 text-sm font-medium text-foreground shadow-md", 
               "focus-visible:ring-0 focus-visible:ring-offset-0 active:scale-95"
             )}
           >
@@ -91,4 +91,3 @@ export default function NoteSection() {
     </div>
   );
 }
-

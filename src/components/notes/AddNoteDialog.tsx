@@ -48,12 +48,13 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
       setError("Note content cannot be empty.");
       return;
     }
-    setError(null); // Clear error on successful save
+    setError(null); 
     onSave({ title, content });
   };
 
   const handleSummarizeClick = () => {
     setIsSummarizing(true);
+    // Simulate API call
     setTimeout(() => {
       setIsSummarizing(false);
     }, 2500); 
@@ -61,39 +62,44 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[520px] bg-card">
+      <DialogContent className="sm:max-w-3xl bg-card"> {/* Increased width */}
         <DialogHeader>
           <DialogTitle className="text-foreground">Add New Note</DialogTitle>
           <DialogDescription className="text-muted-foreground">
             Fill in the details for your new note.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right text-foreground">
+
+        {/* Grid for side-by-side layout on medium screens and up */}
+        <div className="grid md:grid-cols-2 gap-x-6 gap-y-4 py-4">
+          {/* Title Section */}
+          <div className="space-y-2">
+            <Label htmlFor="title" className="text-foreground">
               Title
             </Label>
-            <div className="col-span-3 interactive-element-glow-wrapper rounded-md">
+            <div className="interactive-element-glow-wrapper rounded-md">
               <Input
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full h-10 bg-input text-foreground placeholder:text-muted-foreground"
+                className="w-full h-10 bg-input text-foreground placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
                 placeholder="Enter note title"
               />
             </div>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="content" className="text-right text-foreground self-start pt-2">
+
+          {/* Note Section */}
+          <div className="space-y-2">
+            <Label htmlFor="content" className="text-foreground">
               Note
             </Label>
-            <div className="col-span-3 relative">
+            <div className="relative"> {/* Wrapper for Textarea and Sparkles button */}
               <div className="interactive-element-glow-wrapper rounded-md">
                 <Textarea
                   id="content"
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="min-h-[120px] w-full pr-12 bg-input text-foreground placeholder:text-muted-foreground"
+                  className="min-h-[120px] w-full pr-12 bg-input text-foreground placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-y"
                   placeholder="Write your note here..."
                 />
               </div>
@@ -102,7 +108,7 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
                 size="icon"
                 onClick={handleSummarizeClick}
                 className={cn(
-                  "group absolute right-2 top-2 h-8 w-8 p-1.5 z-10", 
+                  "group absolute right-2 top-2 h-8 w-8 p-1.5 z-10",
                   "hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                 )}
                 aria-label="Summarize Note"
@@ -110,7 +116,7 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
               >
                 <Sparkles
                   className={cn(
-                    "w-5 h-5", 
+                    "w-5 h-5",
                     isSummarizing && "animate-processing-icon",
                     !isSummarizing && "transition-colors group-hover:icon-hover-gradient"
                   )}
@@ -119,15 +125,18 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
               </Button>
             </div>
           </div>
-          <div className="col-span-4 h-5"> {/* Reserve space for error message */}
-            {error && (
-              <p className="text-sm text-destructive text-center">{error}</p>
-            )}
-          </div>
         </div>
+        
+        {/* Reserve space for error message, ensuring it's below the grid */}
+        <div className="h-5 mb-4"> 
+          {error && (
+            <p className="text-sm text-destructive text-center">{error}</p>
+          )}
+        </div>
+
         <DialogFooter className="sm:justify-between">
           <DialogClose asChild>
-            <Button type="button" variant="outline">
+            <Button type="button" variant="outline" className="focus-visible:ring-0 focus-visible:ring-offset-0 active:scale-95">
               Cancel
             </Button>
           </DialogClose>
@@ -137,7 +146,7 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
               onClick={handleSave}
               className={cn(
                  "w-auto rounded-full bg-background px-6 h-10 text-sm font-medium text-foreground",
-                 "focus-visible:ring-0 focus-visible:ring-offset-0" // Handled by wrapper
+                 "focus-visible:ring-0 focus-visible:ring-offset-0 active:scale-95"
               )}
             >
               Save Note

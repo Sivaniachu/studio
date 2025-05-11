@@ -60,8 +60,8 @@ export default function NoteSection() {
           <Button
             onClick={() => setIsAddNoteDialogOpen(true)}
             className={cn(
-              "w-auto rounded-full bg-background px-6 h-10 text-sm font-medium text-foreground shadow-md", // Adjusted size
-              "focus-visible:ring-0 focus-visible:ring-offset-0" 
+              "w-auto rounded-full bg-background px-6 h-10 text-sm font-medium text-foreground shadow-md", 
+              "focus-visible:ring-0 focus-visible:ring-offset-0 active:scale-95" // Added active:scale-95
             )}
           >
             <PlusCircle className="mr-2 h-5 w-5" /> Add Your Note

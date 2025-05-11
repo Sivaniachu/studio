@@ -204,8 +204,8 @@
     background-size: 250% 100%;
     animation: input-sheen-bg-sweep 2s linear infinite;
     pointer-events: none;
-    z-index: 2;
-    opacity: 1;
+    z-index: 2; /* Ensure sheen is on top of the input's ::before glow */
+    opacity: 1; /* Make sure it's visible when .processing is active */
   }
 
 
@@ -224,31 +224,20 @@
     bottom: 0;
     background: linear-gradient(
       to right,
-      transparent 0%,
-      rgba(255, 255, 255, 0.7) 50%,
-      transparent 100%
+      transparent 20%,
+      rgba(0, 0, 0, 0.15) 35%,
+      rgba(255, 255, 255, 0.35) 50%,
+      rgba(0, 0, 0, 0.15) 65%,
+      transparent 80%
     );
-    background-size: 200% 100%;
+    background-size: 250% 100%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: light-sweep 1.5s linear infinite;
+    animation: input-sheen-bg-sweep 2s linear infinite; /* Re-use input's animation */
+    pointer-events: none;
   }
 
-  /* Keyframes for the light sweep */
-  @keyframes light-sweep {
-    0% {
-      background-position: 0% 50%;
-    }
-    100% {
-      background-position: 200% 50%;
-    }
-  }
-
-  /* Optional: Faster sweep on hover */
-  .text-static-gradient-sweep:hover::after {
-    animation: light-sweep 0.1s linear infinite;
-  }
 
   /* Keyframes for input border flow (retained in case used by Tailwind animate utility elsewhere, but not used by ::before directly anymore) */
   @keyframes input-border-flow {

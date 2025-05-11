@@ -256,9 +256,8 @@
   /* Keyframes for processing icon spin */
   @keyframes processing-icon-spin {
     0% { transform: rotate(0deg); }
-    20% { transform: rotate(360deg); animation-timing-function: ease-in; } /* Fast part (0.5s of 2.5s total) */
-    60% { transform: rotate(720deg); animation-timing-function: ease-out; } /* Slow part (1.0s of 2.5s total) */
-    100% { transform: rotate(720deg); } /* Pause (1.0s of 2.5s total) */
+    60% { transform: rotate(360deg); } /* Slow rotation for 1.5s (60% of 2.5s) */
+    100% { transform: rotate(360deg); } /* Pause for 1s (40% of 2.5s) */
   }
 
   .animate-processing-icon {

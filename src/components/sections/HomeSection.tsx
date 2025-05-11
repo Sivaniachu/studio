@@ -23,13 +23,12 @@ export default function HomeSection({ setActiveTab }: HomeSectionProps) {
     if (inputValue.trim() && !isProcessing) {
       setIsProcessing(true);
       
-      // Simulate processing delay
       setTimeout(() => {
         setCommandToExecute(inputValue.trim());
         setActiveTab('ai'); 
         setInputValue(""); 
         setIsProcessing(false);
-      }, 5000); // 5-second delay
+      }, 5000); 
     }
   };
 
@@ -53,7 +52,7 @@ export default function HomeSection({ setActiveTab }: HomeSectionProps) {
           variant="ghost"
           size="icon"
           className={cn(
-            "group absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-1.5 z-10",
+            "group absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-1.5 z-20", // Increased z-index for button
             "hover:bg-transparent", 
             "focus-visible:ring-0 focus-visible:ring-offset-0" 
           )}
@@ -75,8 +74,8 @@ export default function HomeSection({ setActiveTab }: HomeSectionProps) {
           type="text"
           placeholder="Ask me anything..."
           className={cn(
-            "w-full pl-4 pr-12 py-3 text-base md:text-sm rounded-full", 
-            "focus:outline-none focus:ring-0" 
+            "w-full pl-4 pr-12 py-3 text-base md:text-sm rounded-full bg-input text-foreground", 
+            "focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0" // Explicitly remove ring and outline on focus and focus-visible
           )}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}

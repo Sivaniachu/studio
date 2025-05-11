@@ -162,10 +162,13 @@
     opacity: 1;
   }
 
-  .input-gradient-glow-wrapper input {
+  .input-gradient-glow-wrapper > input { /* Specific styling for input inside the home page glow wrapper */
       position: relative;
       z-index: 1; 
+      border: 2px solid transparent !important; /* Crucial: overrides Input component's default border to show glow */
+      /* The input's own background (e.g., bg-input) is applied via its className prop in HomeSection */
   }
+
 
   .input-gradient-glow-wrapper.processing::after {
     content: "";
@@ -186,7 +189,7 @@
     background-size: 250% 100%;
     animation: input-sheen-bg-sweep 2s linear infinite;
     pointer-events: none;
-    z-index: 2; 
+    z-index: 2; /* Above the input content, but below the sparkle icon if z-index on icon is higher */
     opacity: 1; 
   }
   
@@ -327,6 +330,6 @@
   }
 
   .animate-processing-icon {
-    animation: processing-icon-spin 2.5s linear infinite;
+    animation: processing-icon-spin 1.5s linear infinite; /* Changed duration to 1.5s for slower continuous spin */
   }
 }

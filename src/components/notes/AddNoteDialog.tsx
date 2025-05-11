@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AddNoteDialogProps {
   isOpen: boolean;
@@ -26,6 +28,7 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isSummarizing, setIsSummarizing] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -33,6 +36,7 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
       setTitle("");
       setContent("");
       setError(null);
+      setIsSummarizing(false);
     }
   }, [isOpen]);
 
@@ -49,9 +53,20 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
     // onOpenChange(false); // Dialog will be closed by parent or DialogClose
   };
 
+  const handleSummarizeClick = () => {
+    setIsSummarizing(true);
+    // Placeholder for actual summarization logic
+    // Simulate processing for demo
+    setTimeout(() => {
+      setIsSummarizing(false);
+      // console.log("Summarize action triggered for content:", content);
+      // Potentially update content or show summarized version
+    }, 2500); // Corresponds to animation duration
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px] bg-card">
+      <DialogContent className="sm:max-w-[520px] bg-card"> {/* Increased width slightly */}
         <DialogHeader>
           <DialogTitle className="text-foreground">Add New Note</DialogTitle>
           <DialogDescription className="text-muted-foreground">
@@ -63,39 +78,71 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
             <Label htmlFor="title" className="text-right text-foreground">
               Title
             </Label>
+            {/* Standard Input, no glow wrapper */}
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="col-span-3"
+              className="col-span-3 h-10" // Standard input, ensure height consistency if needed
               placeholder="Enter note title"
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="content" className="text-right text-foreground  self-start pt-2">
+            <Label htmlFor="content" className="text-right text-foreground self-start pt-2">
               Note
             </Label>
-            <Textarea
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="col-span-3 min-h-[120px]"
-              placeholder="Write your note here..."
-            />
+            <div className="col-span-3 relative">
+              <Textarea
+                id="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="min-h-[120px] w-full pr-12" // Add padding-right for the button
+                placeholder="Write your note here..."
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleSummarizeClick}
+                className={cn(
+                  "group absolute right-2 top-2 h-8 w-8 p-1.5 z-10", // Adjusted size and padding
+                  "hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                )}
+                aria-label="Summarize Note"
+                disabled={isSummarizing}
+              >
+                <Sparkles
+                  className={cn(
+                    "w-5 h-5", // Standard icon size
+                    isSummarizing && "animate-processing-icon",
+                    !isSummarizing && "transition-colors group-hover:icon-hover-gradient"
+                  )}
+                  aria-hidden="true"
+                />
+              </Button>
+            </div>
           </div>
           {error && (
             <p className="col-span-4 text-sm text-destructive text-center">{error}</p>
           )}
         </div>
-        <DialogFooter>
+        <DialogFooter className="sm:justify-between"> {/* Aligns Cancel to left, Save to right */}
           <DialogClose asChild>
             <Button type="button" variant="outline">
               Cancel
             </Button>
           </DialogClose>
-          <Button type="button" onClick={handleSave}>
-            Save Note
-          </Button>
+          <div className="input-gradient-glow-wrapper rounded-full">
+            <Button
+              type="button"
+              onClick={handleSave}
+              className={cn(
+                 "w-auto rounded-full border-2 border-transparent bg-background px-8 h-11 text-sm font-medium text-foreground", // Match input styling
+                 "focus-visible:ring-0 focus-visible:ring-offset-0"
+              )}
+            >
+              Save Note
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

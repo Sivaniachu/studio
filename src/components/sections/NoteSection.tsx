@@ -3,10 +3,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"; // Needed for wrapper style consistency
 import { PlusCircle } from "lucide-react";
 import AddNoteDialog from "@/components/notes/AddNoteDialog";
 import NoteCard from "@/components/notes/NoteCard";
 import type { Note } from "@/types/notes";
+import { cn } from '@/lib/utils';
 
 export default function NoteSection() {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -53,9 +55,18 @@ export default function NoteSection() {
     <div className="p-4 h-full flex flex-col">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold text-foreground">Your Notes</h2>
-        <Button onClick={() => setIsAddNoteDialogOpen(true)} size="lg" className="shadow-md">
-          <PlusCircle className="mr-2 h-5 w-5" /> Add Your Note
-        </Button>
+        <div className="input-gradient-glow-wrapper rounded-full">
+          <Button
+            onClick={() => setIsAddNoteDialogOpen(true)}
+            // size="lg" // Size is controlled by explicit h-11 and px-8 for consistency with input
+            className={cn(
+              "w-auto rounded-full border-2 border-transparent bg-background px-8 h-11 text-sm font-medium text-foreground shadow-md",
+              "focus-visible:ring-0 focus-visible:ring-offset-0" // Remove ShadCN focus rings
+            )}
+          >
+            <PlusCircle className="mr-2 h-5 w-5" /> Add Your Note
+          </Button>
+        </div>
       </div>
 
       <AddNoteDialog

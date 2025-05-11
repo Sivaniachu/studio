@@ -139,8 +139,8 @@
   /* Input gradient glow wrapper styling */
   .input-gradient-glow-wrapper {
     position: relative;
-    display: inline-block; /* Changed from block to inline-block */
-    width: 100%;
+    display: inline-block; 
+    /* width: 100%; removed to allow natural width for inline-block */
     /* border-radius is applied inline in input.tsx as rounded-full */
   }
 
@@ -233,6 +233,44 @@
     -webkit-text-fill-color: transparent; /* Make the ::after element's text transparent */
     animation: input-sheen-bg-sweep 2s linear infinite; /* Re-use input's animation */
     pointer-events: none; /* Ensure it doesn't interfere with text selection */
+  }
+
+  /* Wrapper for buttons needing a gradient border on hover/focus */
+  .button-pseudo-gradient-border {
+    position: relative;
+    display: inline-flex; /* To wrap button tightly */
+    border-radius: 9999px; /* Match button's rounded-full */
+  }
+
+  .button-pseudo-gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px; /* Controls the thickness of the apparent border */
+    border-radius: inherit; /* Inherit from wrapper */
+    background: linear-gradient(to right, hsl(0, 85%, 60%), hsl(220, 85%, 60%));
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+    z-index: -1; /* Behind the button content */
+    -webkit-mask: /* Create a mask to make it look like a border */
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; /* Use xor for newer browsers */
+    mask-composite: exclude; /* Standard property */
+  }
+
+  .button-pseudo-gradient-border:hover::before,
+  .button-pseudo-gradient-border:focus-within::before { /* :focus-within for accessibility with keyboard */
+    opacity: 1;
+  }
+
+  /* Ensure the button itself has a transparent border to let the pseudo-element show */
+  /* And a background to cover what's behind it */
+  .button-pseudo-gradient-border > button {
+    border: 2px solid transparent !important; /* Override default button border */
+    background-color: hsl(var(--background)) !important; /* Or card background if appropriate */
+    position: relative;
+    z-index: 1; /* Ensure button content is above the pseudo-element */
   }
   
 

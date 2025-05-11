@@ -12,7 +12,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input"; // Standard ShadCN Input
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Sparkles } from "lucide-react";
@@ -66,7 +66,7 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[520px] bg-card"> {/* Increased width slightly */}
+      <DialogContent className="sm:max-w-[520px] bg-card">
         <DialogHeader>
           <DialogTitle className="text-foreground">Add New Note</DialogTitle>
           <DialogDescription className="text-muted-foreground">
@@ -78,12 +78,12 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
             <Label htmlFor="title" className="text-right text-foreground">
               Title
             </Label>
-            {/* Standard Input, no glow wrapper */}
+            {/* Standard Input, no glow wrapper, ensure it does not use .input-gradient-glow-wrapper by default */}
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="col-span-3 h-10" // Standard input, ensure height consistency if needed
+              className="col-span-3 h-10 bg-input text-foreground placeholder:text-muted-foreground focus-visible:ring-ring border-border" 
               placeholder="Enter note title"
             />
           </div>
@@ -96,7 +96,7 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
                 id="content"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                className="min-h-[120px] w-full pr-12" // Add padding-right for the button
+                className="min-h-[120px] w-full pr-12 bg-input text-foreground placeholder:text-muted-foreground focus-visible:ring-ring border-border"
                 placeholder="Write your note here..."
               />
               <Button
@@ -104,7 +104,7 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
                 size="icon"
                 onClick={handleSummarizeClick}
                 className={cn(
-                  "group absolute right-2 top-2 h-8 w-8 p-1.5 z-10", // Adjusted size and padding
+                  "group absolute right-2 top-2 h-8 w-8 p-1.5 z-10", 
                   "hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                 )}
                 aria-label="Summarize Note"
@@ -112,7 +112,7 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
               >
                 <Sparkles
                   className={cn(
-                    "w-5 h-5", // Standard icon size
+                    "w-5 h-5", 
                     isSummarizing && "animate-processing-icon",
                     !isSummarizing && "transition-colors group-hover:icon-hover-gradient"
                   )}
@@ -125,18 +125,18 @@ export default function AddNoteDialog({ isOpen, onOpenChange, onSave }: AddNoteD
             <p className="col-span-4 text-sm text-destructive text-center">{error}</p>
           )}
         </div>
-        <DialogFooter className="sm:justify-between"> {/* Aligns Cancel to left, Save to right */}
+        <DialogFooter className="sm:justify-between">
           <DialogClose asChild>
             <Button type="button" variant="outline">
               Cancel
             </Button>
           </DialogClose>
-          <div className="input-gradient-glow-wrapper rounded-full">
+          <div className="button-pseudo-gradient-border rounded-full">
             <Button
               type="button"
               onClick={handleSave}
               className={cn(
-                 "w-auto rounded-full border-2 border-transparent bg-background px-8 h-11 text-sm font-medium text-foreground", // Match input styling
+                 "w-auto rounded-full bg-background px-6 h-10 text-sm font-medium text-foreground", // Adjusted size
                  "focus-visible:ring-0 focus-visible:ring-offset-0"
               )}
             >

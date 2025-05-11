@@ -20,7 +20,7 @@ export default function NoteCard({ note, onDelete }: NoteCardProps) {
   return (
     <Card className="flex flex-col h-full bg-card shadow-lg hover:shadow-xl transition-shadow duration-200">
       <CardHeader>
-        <CardTitle className="text-primary text-lg break-words">{note.title}</CardTitle>
+        <CardTitle className="text-foreground text-lg break-words">{note.title}</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow overflow-y-auto max-h-48"> {/* Added max-h-48 and overflow-y-auto */}
         <p className="text-foreground whitespace-pre-wrap break-words text-sm">

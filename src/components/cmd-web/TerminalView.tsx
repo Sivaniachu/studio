@@ -28,8 +28,8 @@ export default function TerminalView() {
   const createInitialLines = useCallback((pName: string) => {
     lineIdCounter = 0; // Reset counter before generating IDs
     return [
-      { id: generateLineId(), content: `CmdWeb [Version ${APP_VERSION}] (Prompt: ${pName})`, type: "info" as const },
-      { id: generateLineId(), content: "(c) Firebase Studio. All rights reserved.", type: "info" as const },
+      { id: generateLineId(), content: `TermAI [Version ${APP_VERSION}] (Prompt: ${pName})`, type: "info" as const },
+      { id: generateLineId(), content: "© TermAI CLI. All rights reserved.", type: "info" as const },
       { id: generateLineId(), content: <>&nbsp;</>, type: "info" as const },
     ];
   }, []);

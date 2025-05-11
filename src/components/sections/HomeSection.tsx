@@ -17,12 +17,18 @@ interface HomeSectionProps {
 export default function HomeSection({ setActiveTab }: HomeSectionProps) {
   const [inputValue, setInputValue] = useState("");
   const { setCommandToExecute } = useCommand();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleCommandSubmit = () => {
-    if (inputValue.trim()) {
-      setCommandToExecute(inputValue.trim());
-      setActiveTab('ai'); 
-      setInputValue(""); 
+    if (inputValue.trim() && !isProcessing) {
+      setIsProcessing(true);
+      
+      setTimeout(() => {
+        setCommandToExecute(inputValue.trim());
+        setActiveTab('ai'); 
+        setInputValue(""); 
+        setIsProcessing(false);
+      }, 5000);
     }
   };
 
@@ -38,7 +44,10 @@ export default function HomeSection({ setActiveTab }: HomeSectionProps) {
         Welcome to TermAI
       </h1>
 
-      <div className="relative w-full max-w-md mt-40 input-gradient-glow-wrapper rounded-full">
+      <div className={cn(
+        "relative w-full max-w-md mt-40 input-gradient-glow-wrapper rounded-full",
+        isProcessing && "processing" // Add 'processing' class for sheen effect
+        )}>
         <Button
           variant="ghost"
           size="icon"
@@ -49,6 +58,7 @@ export default function HomeSection({ setActiveTab }: HomeSectionProps) {
           )}
           aria-label="AI Search"
           onClick={handleCommandSubmit}
+          disabled={isProcessing} // Disable button when processing
         >
           <Sparkles
             className="w-5 h-5 transition-colors group-hover:icon-hover-gradient"
@@ -65,6 +75,8 @@ export default function HomeSection({ setActiveTab }: HomeSectionProps) {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
+          disabled={isProcessing} // Disable input when processing
+          readOnly={isProcessing} // Make input read-only when processing
         />
       </div>
     </div>

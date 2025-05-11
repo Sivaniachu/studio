@@ -114,21 +114,32 @@ export default {
             boxShadow: '0 0 8px 2px hsl(var(--primary) / 1), 0 0 12px 2px hsl(var(--ring) / 0.9)'
           }
         },
-        'input-border-flow': { // New keyframes for input border animation
+        'input-border-flow': { 
           '0%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' },
           '100%': { backgroundPosition: '0% 50%' },
+        },
+        'light-sweep': {
+          '0%': { backgroundPosition: '0% 50%' },
+          '100%': { backgroundPosition: '200% 50%'},
+        },
+        'input-sheen-bg-sweep': { /* Added for reflective sheen */
+          '0%': { backgroundPosition: '150% 0' },
+          '100%': { backgroundPosition: '-150% 0'},
         },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
         'blink': 'blink 1s step-end infinite',
-        'textflow': 'textflow-animation 10s ease infinite', /* Added */
-        'border-glow': 'border-glow-animation 1.5s infinite alternate', /* Added */
-        'input-border-flow': 'input-border-flow 4s linear infinite', // New animation utility
+        'textflow': 'textflow-animation 10s ease infinite', 
+        'border-glow': 'border-glow-animation 1.5s infinite alternate', 
+        'input-border-flow': 'input-border-flow 4s linear infinite', 
+        'light-sweep': 'light-sweep 1.5s linear infinite',
+        'input-sheen-bg-sweep': 'input-sheen-bg-sweep 1s linear infinite', /* Added */
   		}
   	}
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
+

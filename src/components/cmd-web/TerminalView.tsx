@@ -123,45 +123,54 @@ export default function TerminalView() {
       const thinkingLineKey = generateLineId();
       addLine(<TypingText key={thinkingLineKey} text="Processing..." speed={30} />, "ai-loading");
 
-      try {
-        const response = await fetchWithTimeout('/api/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: commandStr.trim() }),
-        }, 15000); // 15 second timeout
+      let successfulResult = false;
 
-        setLines(prev => prev.filter(l => l.id !== thinkingLineKey)); // Remove "Processing..."
+      // This promise represents the API call and its immediate processing.
+      // It will resolve regardless of success or failure of the API call itself.
+      const apiCallPromise = (async () => {
+        try {
+          const response = await fetchWithTimeout('/api/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: commandStr.trim() }),
+          }, 15000); // fetchWithTimeout has its own 15s timeout for the fetch operation
 
-        if (!response.ok) {
-          // Try to parse error from response, otherwise throw a generic one based on status
-          const errorData = await response.json().catch(() => null); // Attempt to parse JSON
-          if (errorData && errorData.error) {
-            throw new Error(errorData.error); // Use error from API if available
+          if (response.ok) {
+            const result = await response.json();
+            if (result.responseText && !result.error) {
+              // Only consider it successful if responseText is present and no explicit error
+              setLines(prev => prev.filter(l => l.id !== thinkingLineKey)); // Remove "Processing..."
+              const renderedContent = renderAiResponseContent(result.responseText, generateLineId());
+              addLine(renderedContent, "ai-response");
+              successfulResult = true; // Mark as successful
+            }
+            // If result.responseText is missing or result.error is present, it's not a "successfulResult"
+            // The generic "Some error occurred" will be shown after the 15s overall timeout logic.
           }
-          throw new Error(`HTTP error! status: ${response.status}`); // Fallback error
+          // If !response.ok, it's also not a "successfulResult". Error handled by overall timeout.
+        } catch (error) {
+          // Catch errors from fetchWithTimeout (like its own timeout) or network errors.
+          // These are also not "successfulResult". Error handled by overall timeout.
+          // console.error("API call error:", error); // Optional: for debugging
         }
+      })();
 
-        const result = await response.json();
-        if (result.error) {
-          throw new Error(result.error);
-        }
+      // This promise ensures "Processing..." is shown for at least 15 seconds,
+      // unless apiCallPromise finishes first AND sets successfulResult.
+      const overallTimeoutPromise = new Promise<void>(resolve => setTimeout(resolve, 15000));
 
-        if (result.responseText) {
-          const renderedContent = renderAiResponseContent(result.responseText, generateLineId());
-          addLine(renderedContent, "ai-response");
-        } else {
-          addLine(<TypingText text="Received empty response." speed={30} />, "info");
-        }
-
-      } catch (error) {
-        setLines(prev => prev.filter(l => l.id !== thinkingLineKey)); // Remove "Processing..."
+      // Wait for either the API call to attempt completion or the 15-second overall timeout.
+      await Promise.race([apiCallPromise, overallTimeoutPromise]);
+      
+      // If overallTimeoutPromise resolved (meaning 15s passed) or apiCallPromise resolved without setting successfulResult:
+      if (!successfulResult) {
+        setLines(prev => prev.filter(l => l.id !== thinkingLineKey)); // Ensure "Processing..." is removed
         const errorLineKey = generateLineId();
-        // Display "Some error occurred" for any API/timeout issues.
         addLine(<TypingText key={errorLineKey} text="Some error occurred" speed={30} />, "error");
-      } finally {
-        setIsGenerating(false);
-        inputRef.current?.focus(); // Return focus after processing
       }
+      
+      setIsGenerating(false);
+      inputRef.current?.focus();
     }
   }, [addLine, promptName, createInitialLines]);
 
@@ -197,7 +206,7 @@ export default function TerminalView() {
 
     const trimmedSubmittedCommand = commandSubmitted.trim();
     if (trimmedSubmittedCommand) {
-      setHistoryIndex(commandHistory.length); // Set to new length *after* potential update by submitCommand
+      setHistoryIndex(commandHistory.length); 
     } else {
       setHistoryIndex(commandHistory.length);
     }

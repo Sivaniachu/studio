@@ -122,55 +122,47 @@ export default function TerminalView() {
       setIsGenerating(true);
       const thinkingLineKey = generateLineId();
       addLine(<TypingText key={thinkingLineKey} text="Processing..." speed={30} />, "ai-loading");
+      const commandStartTime = Date.now();
 
-      let successfulResult = false;
+      try {
+        const response = await fetchWithTimeout('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: commandStr.trim() }),
+        }, 15000); // fetchWithTimeout has its own 15s timeout for the fetch operation
 
-      // This promise represents the API call and its immediate processing.
-      // It will resolve regardless of success or failure of the API call itself.
-      const apiCallPromise = (async () => {
-        try {
-          const response = await fetchWithTimeout('/api/generate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: commandStr.trim() }),
-          }, 15000); // fetchWithTimeout has its own 15s timeout for the fetch operation
-
-          if (response.ok) {
-            const result = await response.json();
-            if (result.responseText && !result.error) {
-              // Only consider it successful if responseText is present and no explicit error
-              setLines(prev => prev.filter(l => l.id !== thinkingLineKey)); // Remove "Processing..."
-              const renderedContent = renderAiResponseContent(result.responseText, generateLineId());
-              addLine(renderedContent, "ai-response");
-              successfulResult = true; // Mark as successful
-            }
-            // If result.responseText is missing or result.error is present, it's not a "successfulResult"
-            // The generic "Some error occurred" will be shown after the 15s overall timeout logic.
+        if (response.ok) {
+          const result = await response.json();
+          if (result.responseText && !result.error) {
+            setLines(prev => prev.filter(l => l.id !== thinkingLineKey)); // Remove "Processing..."
+            const renderedContent = renderAiResponseContent(result.responseText, generateLineId());
+            addLine(renderedContent, "ai-response");
+          } else {
+            // API returned OK but with an error in the JSON or missing text
+            throw new Error(result.error || "API returned no response text or an error flag.");
           }
-          // If !response.ok, it's also not a "successfulResult". Error handled by overall timeout.
-        } catch (error) {
-          // Catch errors from fetchWithTimeout (like its own timeout) or network errors.
-          // These are also not "successfulResult". Error handled by overall timeout.
-          // console.error("API call error:", error); // Optional: for debugging
+        } else {
+          // API returned non-OK status
+           const errorData = await response.json().catch(() => ({ detail: `API request failed with status ${response.status} and could not parse error body.` }));
+           throw new Error(errorData.detail || `API request failed with status ${response.status}`);
         }
-      })();
+      } catch (error) {
+        // This catch handles errors from fetchWithTimeout (API's own 15s timeout, network errors)
+        // AND errors thrown from the success path if the response structure was bad or indicated an error.
+        const elapsedTime = Date.now() - commandStartTime;
+        const minDisplayTimeForProcessingError = 15000; 
+        const timeToWaitBeforeShowingError = minDisplayTimeForProcessingError - elapsedTime;
 
-      // This promise ensures "Processing..." is shown for at least 15 seconds,
-      // unless apiCallPromise finishes first AND sets successfulResult.
-      const overallTimeoutPromise = new Promise<void>(resolve => setTimeout(resolve, 15000));
-
-      // Wait for either the API call to attempt completion or the 15-second overall timeout.
-      await Promise.race([apiCallPromise, overallTimeoutPromise]);
-      
-      // If overallTimeoutPromise resolved (meaning 15s passed) or apiCallPromise resolved without setting successfulResult:
-      if (!successfulResult) {
-        setLines(prev => prev.filter(l => l.id !== thinkingLineKey)); // Ensure "Processing..." is removed
+        if (timeToWaitBeforeShowingError > 0) {
+          await new Promise(resolve => setTimeout(resolve, timeToWaitBeforeShowingError));
+        }
+        setLines(prev => prev.filter(l => l.id !== thinkingLineKey)); // Remove "Processing..."
         const errorLineKey = generateLineId();
         addLine(<TypingText key={errorLineKey} text="Some error occurred" speed={30} />, "error");
+      } finally {
+        setIsGenerating(false);
+        inputRef.current?.focus();
       }
-      
-      setIsGenerating(false);
-      inputRef.current?.focus();
     }
   }, [addLine, promptName, createInitialLines]);
 

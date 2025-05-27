@@ -45,13 +45,16 @@ export async function POST(request: NextRequest) {
     // Simulating a delay and a response for demonstration purposes:
     await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
 
-    let responseText = `Your model processed: "${query}". Implement your model logic here.`;
+    // Changed to provide a generic response without echoing the query.
+    let responseText = "This is a simulated response from your custom model.";
     
     if (query.toLowerCase().includes("error example")) {
+        // The error message here will be caught by TerminalView and displayed as "Some error occurred"
         return NextResponse.json({ error: "This is a simulated error from your model." }, { status: 500 });
     }
     if (query.toLowerCase().includes("code example")) {
-        responseText = `Here's some example code based on your query "${query}":
+        // Changed to provide code without echoing the query.
+        responseText = `Here's some example code:
 \`\`\`python
 def greet(name):
   print(f"Hello, {name}!")
@@ -71,6 +74,7 @@ console.log("Hello from JavaScript!");
   } catch (error) {
     console.error('Error in /api/generate:', error);
     const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+    // This error response will also be displayed as "Some error occurred" by TerminalView if it reaches there.
     return NextResponse.json({error: 'Failed to generate text: ' + errorMessage}, {status: 500});
   }
 }

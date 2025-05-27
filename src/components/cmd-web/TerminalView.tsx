@@ -133,8 +133,12 @@ export default function TerminalView() {
         setLines(prev => prev.filter(l => l.id !== thinkingLineKey)); // Remove "Processing..."
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({error: `HTTP error! status: ${response.status}`}));
-          throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+          // Try to parse error from response, otherwise throw a generic one based on status
+          const errorData = await response.json().catch(() => null); // Attempt to parse JSON
+          if (errorData && errorData.error) {
+            throw new Error(errorData.error); // Use error from API if available
+          }
+          throw new Error(`HTTP error! status: ${response.status}`); // Fallback error
         }
 
         const result = await response.json();
@@ -151,9 +155,9 @@ export default function TerminalView() {
 
       } catch (error) {
         setLines(prev => prev.filter(l => l.id !== thinkingLineKey)); // Remove "Processing..."
-        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
         const errorLineKey = generateLineId();
-        addLine(<TypingText key={errorLineKey} text={`Error: ${errorMessage}`} speed={30} />, "error");
+        // Display "Some error occurred" for any API/timeout issues.
+        addLine(<TypingText key={errorLineKey} text="Some error occurred" speed={30} />, "error");
       } finally {
         setIsGenerating(false);
         inputRef.current?.focus(); // Return focus after processing
@@ -172,18 +176,14 @@ export default function TerminalView() {
     );
     addLine(displayInput, "input");
 
-    // processCommand is async, so we await it
     await processCommand(trimmedCommand);
 
     if (trimmedCommand) {
       setCommandHistory(prevCmdHistory => {
         const newHistory = [...prevCmdHistory, trimmedCommand];
-        // Optional: Limit history size if needed
-        // if (newHistory.length > 50) return newHistory.slice(newHistory.length - 50);
         return newHistory;
       });
     }
-    // setHistoryIndex will be updated in handleInternalSubmit based on the latest commandHistory
   }, [promptName, processCommand, addLine]);
 
 
@@ -191,15 +191,13 @@ export default function TerminalView() {
     if (isGenerating) return;
 
     const commandSubmitted = currentInput;
-    setCurrentInput(""); // Clear input before processing
+    setCurrentInput(""); 
 
-    await submitCommand(commandSubmitted); // submitCommand now awaits processCommand
+    await submitCommand(commandSubmitted); 
 
-    // Update historyIndex after command submission and potential history update
-    // Use functional update for setHistoryIndex to get the latest commandHistory.
     const trimmedSubmittedCommand = commandSubmitted.trim();
     if (trimmedSubmittedCommand) {
-      setHistoryIndex(prevHistory => commandHistory.length);
+      setHistoryIndex(commandHistory.length); // Set to new length *after* potential update by submitCommand
     } else {
       setHistoryIndex(commandHistory.length);
     }
@@ -212,7 +210,6 @@ export default function TerminalView() {
     const executeCmd = async () => {
         if (commandToExecute && !isGenerating) {
             setCurrentInput(commandToExecute);
-            // This effect will re-run due to currentInput change if commandToExecute was set.
         }
     };
     executeCmd();
@@ -277,7 +274,7 @@ export default function TerminalView() {
               "text-cmd-output": line.type === "output" || line.type === "ai-response",
               "text-cmd-error": line.type === "error",
               "text-cmd-info": line.type === "info",
-              "text-cmd-output": line.type === "ai-loading", // Style for loading
+              "text-cmd-output": line.type === "ai-loading", 
             })}
           >
             {Array.isArray(line.content)
@@ -312,3 +309,4 @@ export default function TerminalView() {
     </div>
   );
 }
+

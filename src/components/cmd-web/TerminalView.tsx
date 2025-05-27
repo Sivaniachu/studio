@@ -13,7 +13,7 @@ const APP_VERSION = "1.0.0.2024";
 
 interface Line {
   id: string;
-  content: React.ReactNode | React.ReactNode[]; // Allow array for mixed content
+  content: React.ReactNode | React.ReactNode[]; 
   type: "input" | "output" | "error" | "info" | "ai-response" | "ai-loading";
 }
 
@@ -30,8 +30,6 @@ const fetchWithTimeout = (url: string, options: RequestInit, timeout = 15000): P
 };
 
 const renderAiResponseContent = (responseText: string, lineKey: string): React.ReactNode[] => {
-  // Regex to identify code blocks (```lang\ncode\n``` or ```\ncode\n```)
-  // It captures the language (optional) and the code content.
   const parts = responseText.split(/(```(?:[a-zA-Z0-9_.-]+)?\n[\s\S]*?\n```)/g);
   let partKey = 0;
 
@@ -46,10 +44,9 @@ const renderAiResponseContent = (responseText: string, lineKey: string): React.R
         </pre>
       );
     } else if (part.trim()) {
-      // For non-code parts, use TypingText
       return <TypingText key={`${lineKey}-text-${partKey}`} text={part.trim()} />;
     }
-    return null; // Filter out empty strings or unmatched parts
+    return null; 
   }).filter(Boolean) as React.ReactNode[];
 };
 
@@ -127,17 +124,16 @@ export default function TerminalView() {
     } else if (commandStr.trim() === "") {
       // Do nothing for empty command
     } else {
-      // External command - send to AI
       setIsGenerating(true);
-      const loadingLineId = generateLineId();
-      addLine(<TypingText text="AI is thinking..." />, "ai-loading");
+      const thinkingLineKey = generateLineId();
+      addLine(<TypingText key={thinkingLineKey} text="AI is thinking..." speed={30} />, "ai-loading");
       
       try {
         const response = await fetchWithTimeout('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query: commandStr.trim() }),
-        }, 15000); // 15 seconds timeout
+        }, 15000);
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({error: `HTTP error! status: ${response.status}`}));
@@ -149,7 +145,6 @@ export default function TerminalView() {
           throw new Error(result.error);
         }
 
-        // Remove "AI is thinking..." line
         setLines(prev => prev.filter(l => l.type !== 'ai-loading'));
         const renderedContent = renderAiResponseContent(result.responseText, generateLineId());
         addLine(renderedContent, "ai-response");
@@ -157,14 +152,15 @@ export default function TerminalView() {
       } catch (error) {
          setLines(prev => prev.filter(l => l.type !== 'ai-loading'));
         const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-        addLine(`Error: ${errorMessage}`, "error");
+        const errorLineKey = generateLineId();
+        addLine(<TypingText key={errorLineKey} text={`Error: ${errorMessage}`} speed={30} />, "error");
       } finally {
         setIsGenerating(false);
       }
     }
   }, [addLine, promptName, createInitialLines]);
 
-  const submitCommand = useCallback((commandToProcess: string) => {
+  const submitCommand = useCallback(async (commandToProcess: string) => {
     const trimmedCommand = commandToProcess.trim();
     const displayInput = (
       <>
@@ -175,35 +171,67 @@ export default function TerminalView() {
     );
     addLine(displayInput, "input");
 
+    await processCommand(trimmedCommand);
+
     if (trimmedCommand) {
-      processCommand(trimmedCommand);
       setCommandHistory(prevCmdHistory => {
         if (prevCmdHistory.length === 0 || prevCmdHistory[prevCmdHistory.length - 1] !== trimmedCommand) {
           return [...prevCmdHistory, trimmedCommand];
         }
         return prevCmdHistory;
       });
-    } else { // if only whitespace or empty, still add a new prompt line implicitly by not adding output
-       processCommand(""); // Will do nothing but ensures prompt moves
     }
   }, [promptName, processCommand, addLine]);
 
-  const handleInternalSubmit = useCallback(() => {
-    if (isGenerating) return; // Prevent submit while AI is working
-    submitCommand(currentInput);
+  const handleInternalSubmit = useCallback(async () => {
+    if (isGenerating) return; 
+    
+    const commandSubmitted = currentInput; // Capture current input
+    await submitCommand(commandSubmitted); // submitCommand now awaits processCommand
+
     setCurrentInput(""); 
-    setHistoryIndex(commandHistory.length);
+    
+    // Update historyIndex based on the latest commandHistory state
+    // This ensures it points correctly after a command might have been added.
+    const trimmedSubmittedCommand = commandSubmitted.trim();
+    if (trimmedSubmittedCommand) {
+      // If a non-empty command was submitted, history was potentially updated.
+      // Use functional update for setHistoryIndex to get the latest commandHistory.
+      setHistoryIndex(ch => ch.length);
+    } else {
+      // If an empty command was submitted, history was not changed by this command.
+      setHistoryIndex(commandHistory.length); // Point to the current end of history.
+    }
+    
     setSuggestions([]);
     setActiveSuggestionIndex(-1);
-  }, [currentInput, submitCommand, commandHistory.length, isGenerating]);
+    inputRef.current?.focus(); // Ensure focus is returned after processing
+  }, [currentInput, submitCommand, commandHistory, isGenerating]);
+
 
   useEffect(() => {
-    if (commandToExecute) {
-      submitCommand(commandToExecute);
-      setCommandToExecute(null); 
-      inputRef.current?.focus(); 
-    }
-  }, [commandToExecute, setCommandToExecute, submitCommand]);
+    const executeCmd = async () => {
+        if (commandToExecute && !isGenerating) {
+            setCurrentInput(commandToExecute);
+            // This effect will re-run due to currentInput change if commandToExecute was set.
+            // The next effect below will pick it up.
+        }
+    };
+    executeCmd();
+  }, [commandToExecute, isGenerating]);
+  
+  useEffect(() => {
+    const triggerSubmitForProgrammatic = async () => {
+        // Check if currentInput was set by commandToExecute and is ready for submission
+        if (commandToExecute && currentInput === commandToExecute && !isGenerating) {
+            await handleInternalSubmit(); // handleInternalSubmit uses the latest currentInput
+            setCommandToExecute(null);    // Clear the trigger for programmatic execution
+        }
+    };
+    triggerSubmitForProgrammatic();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentInput, commandToExecute, handleInternalSubmit, isGenerating, setCommandToExecute]);
+
 
   const fetchSuggestions = useCallback(async (prefix: string) => {
     if (!prefix.trim() || prefix.includes(" ") || isGenerating) {
@@ -241,7 +269,7 @@ export default function TerminalView() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (isGenerating && e.key !== 'Escape') { // Allow Esc to potentially cancel
+    if (isGenerating && e.key !== 'Escape') { 
         e.preventDefault();
         return;
     }

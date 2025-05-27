@@ -7,11 +7,16 @@ interface GenerateApiInput {
   query: string;
 }
 
-// Define the expected output shape (matches TerminalView's expectation)
-interface GenerateApiOutput {
-  responseText?: string;
-  error?: string;
+// Define the expected output shape from your successful model call
+interface YourModelSuccessOutput {
+  generated_text: string; // Example field, adjust to your model's output
 }
+
+// Define a potential error shape from your model if it handles errors internally
+interface YourModelErrorOutput {
+  detail: string; // Example field, adjust as needed
+}
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,59 +27,55 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({error: 'Query is required'}, {status: 400});
     }
 
+    let responseText: string | undefined;
+
     // --- START: CUSTOM MODEL INTEGRATION POINT ---
     // Replace this section with the logic to call your custom model.
-    // For example, you might make a fetch request to your model's endpoint:
+    // Example structure:
     /*
-    const modelResponse = await fetch('YOUR_MODEL_ENDPOINT', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: query }), // Adjust payload as needed
-    });
+    try {
+      const modelApiResponse = await fetch('YOUR_MODEL_ENDPOINT', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: query }), // Adjust payload as needed by your model
+      });
 
-    if (!modelResponse.ok) {
-      const errorData = await modelResponse.json().catch(() => ({ detail: 'Failed to call model and parse error' }));
-      throw new Error(errorData.detail || `Model request failed with status ${modelResponse.status}`);
+      if (!modelApiResponse.ok) {
+        // Try to parse error from your model's response
+        const errorData: YourModelErrorOutput = await modelApiResponse.json().catch(() => ({ detail: 'Model responded with an error, but error details are unparseable.' }));
+        // This error will be caught by the outer catch and returned as a 500
+        throw new Error(errorData.detail || `Model request failed with status ${modelApiResponse.status}`);
+      }
+
+      const modelResult: YourModelSuccessOutput = await modelApiResponse.json();
+      responseText = modelResult.generated_text; // Assuming your model returns this structure
+
+    } catch (modelError) {
+      console.error('Error calling custom model:', modelError);
+      // This error will be caught by the main try-catch of this API route
+      throw modelError;
     }
-
-    const modelResult = await modelResponse.json();
-    // Assuming your model returns something like { generated_text: "..." }
-    const responseText = modelResult.generated_text;
     */
-
-    // Simulating a delay and a response for demonstration purposes:
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
-
-    // Changed to provide a generic response without echoing the query.
-    let responseText = "This is a simulated response from your custom model.";
-    
-    if (query.toLowerCase().includes("error example")) {
-        // The error message here will be caught by TerminalView and displayed as "Some error occurred"
-        return NextResponse.json({ error: "This is a simulated error from your model." }, { status: 500 });
-    }
-    if (query.toLowerCase().includes("code example")) {
-        // Changed to provide code without echoing the query.
-        responseText = `Here's some example code:
-\`\`\`python
-def greet(name):
-  print(f"Hello, {name}!")
-
-greet("Developer")
-\`\`\`
-And some JavaScript:
-\`\`\`javascript
-console.log("Hello from JavaScript!");
-\`\`\``;
-    }
-
+    // If your model integration logic is not implemented or doesn't set responseText,
+    // it will remain undefined.
     // --- END: CUSTOM MODEL INTEGRATION POINT ---
 
-    return NextResponse.json({responseText});
+    if (responseText !== undefined) {
+      // If your model successfully produced text, return it.
+      return NextResponse.json({responseText});
+    } else {
+      // If responseText is still undefined, it means the custom model logic
+      // was not implemented, or it was implemented but did not produce a responseText.
+      // In this case, we return a 503 error. TerminalView.tsx's fetchWithTimeout
+      // will handle its own 15-second timeout if this API itself takes too long to send this 503.
+      // If this 503 is returned quickly, TerminalView will immediately process it as an error.
+      return NextResponse.json({ error: "Model service not available or did not produce a response." }, { status: 503 });
+    }
 
   } catch (error) {
-    console.error('Error in /api/generate:', error);
+    console.error('Error in /api/generate route:', error);
     const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
-    // This error response will also be displayed as "Some error occurred" by TerminalView if it reaches there.
-    return NextResponse.json({error: 'Failed to generate text: ' + errorMessage}, {status: 500});
+    // This catches errors from JSON parsing, or errors thrown from the custom model integration.
+    return NextResponse.json({error: `API Error: ${errorMessage}`}, {status: 500});
   }
 }

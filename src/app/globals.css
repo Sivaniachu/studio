@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -195,7 +196,7 @@
   
   .input-gradient-glow-wrapper.processing:hover::before,
   .input-gradient-glow-wrapper.processing:focus-within::before {
-    opacity: 1; 
+    opacity: 1; /* Ensure border glow remains visible during processing hover/focus */
   }
   
   /* Static gradient text (non-animated background) */
@@ -221,9 +222,9 @@
     background: linear-gradient(
       to right,
       transparent 20%,
-      rgba(0, 0, 0, 0.15) 35%,  
-      rgba(255, 255, 255, 0.35) 50%, 
-      rgba(0, 0, 0, 0.15) 65%,  
+      rgba(0, 0, 0, 0.15) 35%,  /* Darker part of sheen */
+      rgba(255, 255, 255, 0.35) 50%, /* Lighter part of sheen */
+      rgba(0, 0, 0, 0.15) 65%,  /* Darker part of sheen */
       transparent 80%
     );
     background-size: 250% 100%;
@@ -231,8 +232,8 @@
     background-clip: text;
     /* Text fill color should be transparent for the ::after so the original text's gradient shows through where the ::after is transparent */
      -webkit-text-fill-color: transparent; 
-    animation: input-sheen-bg-sweep 2s linear infinite; 
-    pointer-events: none; 
+    animation: input-sheen-bg-sweep 2s linear infinite; /* Use the same animation as input */
+    pointer-events: none; /* Ensure it doesn't interfere with text selection */
   }
 
   /* Wrapper for buttons needing a gradient border on hover/focus - general purpose */
@@ -314,22 +315,23 @@
   
   @keyframes input-sheen-bg-sweep {
     0% {
-      background-position: 150% 0; 
+      background-position: 150% 0; /* Start sheen from right */
     }
     100% {
-      background-position: -150% 0; 
+      background-position: -150% 0; /* Move sheen to left */
     }
   }
 
   @keyframes processing-icon-spin {
     0% { transform: rotate(0deg); }
     /* 60% of 2.5s is 1.5s for rotation */
-    60% { transform: rotate(360deg); } 
+    60% { transform: rotate(360deg); } /* Complete one full rotation */
     /* Pause for 1s (40% of 2.5s) */
-    100% { transform: rotate(360deg); } 
+    100% { transform: rotate(360deg); } /* Hold position */
   }
 
   .animate-processing-icon {
     animation: processing-icon-spin 1.5s linear infinite; /* Changed duration to 1.5s for slower continuous spin */
   }
 }
+

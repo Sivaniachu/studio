@@ -1,7 +1,9 @@
+
 "use client";
 
 import { suggestCommand, type SuggestCommandInput, type SuggestCommandOutput } from "@/ai/flows/suggest-command";
 import Cursor from "@/components/cmd-web/Cursor";
+import TypingText from "@/components/cmd-web/TypingText";
 import { useSettings } from "@/context/SettingsContext";
 import { useCommand } from "@/context/CommandContext"; 
 import { cn } from "@/lib/utils";
@@ -11,22 +13,53 @@ const APP_VERSION = "1.0.0.2024";
 
 interface Line {
   id: string;
-  content: React.ReactNode;
-  type: "input" | "output" | "error" | "info";
+  content: React.ReactNode | React.ReactNode[]; // Allow array for mixed content
+  type: "input" | "output" | "error" | "info" | "ai-response" | "ai-loading";
 }
 
 let lineIdCounter = 0;
 const generateLineId = () => `line-${lineIdCounter++}`;
 
+const fetchWithTimeout = (url: string, options: RequestInit, timeout = 15000): Promise<Response> => {
+  return Promise.race([
+    fetch(url, options),
+    new Promise<Response>((_, reject) =>
+      setTimeout(() => reject(new Error('Request timed out')), timeout)
+    )
+  ]);
+};
+
+const renderAiResponseContent = (responseText: string, lineKey: string): React.ReactNode[] => {
+  // Regex to identify code blocks (```lang\ncode\n``` or ```\ncode\n```)
+  // It captures the language (optional) and the code content.
+  const parts = responseText.split(/(```(?:[a-zA-Z0-9_.-]+)?\n[\s\S]*?\n```)/g);
+  let partKey = 0;
+
+  return parts.map((part) => {
+    partKey++;
+    const codeBlockMatch = part.match(/```(?:[a-zA-Z0-9_.-]+)?\n([\s\S]*?)\n```/);
+    if (codeBlockMatch && codeBlockMatch[1] !== undefined) {
+      const code = codeBlockMatch[1];
+      return (
+        <pre key={`${lineKey}-code-${partKey}`} className="bg-muted/30 p-3 rounded-md overflow-x-auto my-1 text-sm text-cmd-output block">
+          <code>{code}</code>
+        </pre>
+      );
+    } else if (part.trim()) {
+      // For non-code parts, use TypingText
+      return <TypingText key={`${lineKey}-text-${partKey}`} text={part.trim()} />;
+    }
+    return null; // Filter out empty strings or unmatched parts
+  }).filter(Boolean) as React.ReactNode[];
+};
+
+
 export default function TerminalView() {
   const { promptName } = useSettings();
   const { commandToExecute, setCommandToExecute } = useCommand();
-  // currentPromptString is not directly used for rendering the prompt, 
-  // promptName is used directly in JSX. Can be removed if not used elsewhere.
-  // const currentPromptString = `${promptName}>`; 
-
+  
   const createInitialLines = useCallback((pName: string) => {
-    lineIdCounter = 0; // Reset counter before generating IDs
+    lineIdCounter = 0; 
     return [
       { id: generateLineId(), content: `TermAI [Version ${APP_VERSION}] (Prompt: ${pName})`, type: "info" as const },
       { id: generateLineId(), content: "© TermAI CLI. All rights reserved.", type: "info" as const },
@@ -37,20 +70,19 @@ export default function TerminalView() {
   const [lines, setLines] = useState<Line[]>(() => createInitialLines(promptName));
   const [currentInput, setCurrentInput] = useState("");
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
-  const [historyIndex, setHistoryIndex] = useState(-1); // Should be -1 or commandHistory.length initially
+  const [historyIndex, setHistoryIndex] = useState(-1); 
   
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const terminalEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setLines(createInitialLines(promptName));
-    // lineIdCounter is reset within createInitialLines and correctly incremented
   }, [promptName, createInitialLines]);
-
 
   const scrollToBottom = () => {
     terminalEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -62,54 +94,75 @@ export default function TerminalView() {
     inputRef.current?.focus();
   }, []);
 
-  const addLine = useCallback((content: React.ReactNode, type: Line["type"]) => {
+  const addLine = useCallback((content: React.ReactNode | React.ReactNode[], type: Line["type"]) => {
     setLines((prevLines) => [...prevLines, { id: generateLineId(), content, type }]);
-  }, []); // setLines is stable
+  }, []);
 
-  const processCommand = useCallback((commandStr: string) => {
+  const processCommand = useCallback(async (commandStr: string) => {
     const [command, ...args] = commandStr.trim().split(/\s+/);
     const fullArg = args.join(" ");
 
-    switch (command.toLowerCase()) {
-      case "cls":
-        // Re-initialize lines using the createInitialLines pattern for consistency
-        setLines(createInitialLines(promptName));
-        break;
-      case "echo":
-        addLine(fullArg || <>&nbsp;</>, "output");
-        break;
-      case "help":
+    const internalCommands: { [key: string]: () => void } = {
+      cls: () => setLines(createInitialLines(promptName)),
+      echo: () => addLine(fullArg || <>&nbsp;</>, "output"),
+      help: () => {
         addLine("Available commands:", "output");
         addLine("  CLS          - Clears the screen.", "output");
         addLine("  ECHO [text]  - Displays messages.", "output");
         addLine("  DATE         - Displays the current date.", "output");
         addLine("  TIME         - Displays the current time.", "output");
-        addLine("  VER          - Displays the CmdWeb version.", "output");
+        addLine("  VER          - Displays the TermAI version.", "output");
         addLine("  HELP         - Provides Help information for commands.", "output");
-        addLine("  EXIT         - Exits the CmdWeb (simulated).", "output");
-        break;
-      case "date":
-        addLine(new Date().toDateString(), "output");
-        break;
-      case "time":
-        addLine(new Date().toLocaleTimeString(), "output");
-        break;
-      case "ver":
-        addLine(`CmdWeb [Version ${APP_VERSION}] (Prompt: ${promptName})`, "output");
-        break;
-      case "exit":
-        addLine("Exiting CmdWeb... (This is a simulation)", "info");
-        break;
-      case "":
-        break;
-      default:
-        addLine(
-          `'${command}' is not recognized as an internal or external command, operable program or batch file.`,
-          "error"
-        );
-        break;
+        addLine("  EXIT         - Exits TermAI (simulated).", "output");
+        addLine("  Any other command will be sent to the AI.", "info");
+      },
+      date: () => addLine(new Date().toDateString(), "output"),
+      time: () => addLine(new Date().toLocaleTimeString(), "output"),
+      ver: () => addLine(`TermAI [Version ${APP_VERSION}] (Prompt: ${promptName})`, "output"),
+      exit: () => addLine("Exiting TermAI... (This is a simulation)", "info"),
+    };
+
+    if (command.toLowerCase() in internalCommands) {
+      internalCommands[command.toLowerCase()]();
+    } else if (commandStr.trim() === "") {
+      // Do nothing for empty command
+    } else {
+      // External command - send to AI
+      setIsGenerating(true);
+      const loadingLineId = generateLineId();
+      addLine(<TypingText text="AI is thinking..." />, "ai-loading");
+      
+      try {
+        const response = await fetchWithTimeout('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: commandStr.trim() }),
+        }, 15000); // 15 seconds timeout
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({error: `HTTP error! status: ${response.status}`}));
+          throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        if (result.error) {
+          throw new Error(result.error);
+        }
+
+        // Remove "AI is thinking..." line
+        setLines(prev => prev.filter(l => l.type !== 'ai-loading'));
+        const renderedContent = renderAiResponseContent(result.responseText, generateLineId());
+        addLine(renderedContent, "ai-response");
+
+      } catch (error) {
+         setLines(prev => prev.filter(l => l.type !== 'ai-loading'));
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+        addLine(`Error: ${errorMessage}`, "error");
+      } finally {
+        setIsGenerating(false);
+      }
     }
-  }, [addLine, promptName, createInitialLines]); // Added createInitialLines dependency for 'cls'
+  }, [addLine, promptName, createInitialLines]);
 
   const submitCommand = useCallback((commandToProcess: string) => {
     const trimmedCommand = commandToProcess.trim();
@@ -124,25 +177,25 @@ export default function TerminalView() {
 
     if (trimmedCommand) {
       processCommand(trimmedCommand);
-      // Check commandHistory state directly before updating
       setCommandHistory(prevCmdHistory => {
         if (prevCmdHistory.length === 0 || prevCmdHistory[prevCmdHistory.length - 1] !== trimmedCommand) {
           return [...prevCmdHistory, trimmedCommand];
         }
         return prevCmdHistory;
       });
+    } else { // if only whitespace or empty, still add a new prompt line implicitly by not adding output
+       processCommand(""); // Will do nothing but ensures prompt moves
     }
   }, [promptName, processCommand, addLine]);
 
-
   const handleInternalSubmit = useCallback(() => {
+    if (isGenerating) return; // Prevent submit while AI is working
     submitCommand(currentInput);
     setCurrentInput(""); 
-    setHistoryIndex(commandHistory.length); // Reset history index after submit
+    setHistoryIndex(commandHistory.length);
     setSuggestions([]);
     setActiveSuggestionIndex(-1);
-  }, [currentInput, submitCommand, commandHistory.length]);
-
+  }, [currentInput, submitCommand, commandHistory.length, isGenerating]);
 
   useEffect(() => {
     if (commandToExecute) {
@@ -153,7 +206,7 @@ export default function TerminalView() {
   }, [commandToExecute, setCommandToExecute, submitCommand]);
 
   const fetchSuggestions = useCallback(async (prefix: string) => {
-    if (!prefix.trim() || prefix.includes(" ")) {
+    if (!prefix.trim() || prefix.includes(" ") || isGenerating) {
       setSuggestions([]);
       return;
     }
@@ -167,7 +220,7 @@ export default function TerminalView() {
       setSuggestions([]);
     }
     setLoadingSuggestions(false);
-  }, []);
+  }, [isGenerating]);
 
   const debouncedFetchSuggestions = useCallback(
     debounce(fetchSuggestions, 300),
@@ -175,20 +228,23 @@ export default function TerminalView() {
   );
 
   useEffect(() => {
-    if (currentInput) {
+    if (currentInput && !isGenerating) {
       debouncedFetchSuggestions(currentInput);
     } else {
       setSuggestions([]);
       setActiveSuggestionIndex(-1);
     }
-  }, [currentInput, debouncedFetchSuggestions]);
-
+  }, [currentInput, debouncedFetchSuggestions, isGenerating]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentInput(e.target.value);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (isGenerating && e.key !== 'Escape') { // Allow Esc to potentially cancel
+        e.preventDefault();
+        return;
+    }
     if (e.key === "Enter") {
       e.preventDefault();
       handleInternalSubmit();
@@ -249,23 +305,21 @@ export default function TerminalView() {
             key={line.id}
             className={cn("whitespace-pre-wrap break-words", {
               "text-cmd-input": line.type === "input", 
-              "text-cmd-output": line.type === "output",
+              "text-cmd-output": line.type === "output" || line.type === "ai-response" || line.type === "ai-loading",
               "text-cmd-error": line.type === "error",
               "text-cmd-info": line.type === "info",
             })}
           >
-            {line.type === 'input' && typeof line.content === 'object' && React.isValidElement(line.content) ? (
-              line.content 
-            ) : (
-              line.content 
-            )}
+            {Array.isArray(line.content) 
+              ? line.content.map((node, idx) => <React.Fragment key={idx}>{node}</React.Fragment>) 
+              : line.content}
           </div>
         ))}
         <div className="flex items-center">
           <span className="text-prompt-gradient">{promptName}</span>
           <span className="text-cmd-prompt">&gt;</span>
           <span className="break-all text-cmd-input">{currentInput.replace(/ /g, '\u00A0')}</span>
-          <Cursor />
+          {!isGenerating && <Cursor />}
         </div>
         <div ref={terminalEndRef} />
       </div>
@@ -281,9 +335,10 @@ export default function TerminalView() {
         autoCapitalize="none"
         autoCorrect="off"
         spellCheck="false"
+        disabled={isGenerating}
       />
 
-      {suggestions.length > 0 && (
+      {suggestions.length > 0 && !isGenerating && (
         <div className="mt-1 p-1 bg-cmd-suggestion rounded-sm shadow-md max-w-md">
           <ul className="text-cmd-suggestion-foreground">
             {suggestions.map((s, idx) => (
